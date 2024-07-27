@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://avtomobilDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="avtomobilDc"
+                  class="com.company.aab.entity.Avtomobil">
+            <fetchPlan extends="_base">
+                <property name="fotos" fetchPlan="_base"/>
+                <property name="performance_service" fetchPlan="_base"/>
+                <property name="barcode" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="fotosDc" property="fotos"/>
+            <collection id="uslugiDc" property="performance_service"/>
+            <collection id="barcodeDc" property="barcode"/>
+        </instance>
+        <instance id="newFotoDc" class="com.company.aab.entity.Foto"/>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="avtomobilDc">
+            <textField id="nomerField" property="nomer"/>
+            <textField id="markaField" property="marka"/>
+            <textField id="statusField" property="status"/>
+        </formLayout>
+        <formLayout id="newF" dataContainer="newFotoDc">
+            <fileStorageUploadField id="fileU" property="file" maxFileSize="6000000"/>
+        </formLayout>
+        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="10em">
+            <columns resizable="true">
+                <column key="imageCol" sortable="false" flexGrow="0" resizable="false"/>
+                <column key="deleteIm" sortable="false" flexGrow="0" resizable="false"/>
+            </columns>
+            <actions>
+                <action id="remove" type="list_remove"/>
+            </actions>
+        </dataGrid>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button action="uslugiDataGrid.create" text="dobawit uslugu"/>
+            <button action="uslugiDataGrid.edit"/>
+            <button action="uslugiDataGrid.remove"/>
+        </hbox>
+        <dataGrid id="uslugiDataGrid" dataContainer="uslugiDc" width="100%" height="100%">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns>
+                <column property="usluga.title" sortable="false" flexGrow="0" resizable="false"/>
+            </columns>
+        </dataGrid>
+        <hbox id="ubuttonsPanel" classNames="buttons-panel">
+            <button action="barcodeDataGrid.create"/>
+            <button action="barcodeDataGrid.edit"/>
+            <button action="barcodeDataGrid.remove"/>
+        </hbox>
+        <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" height="100%">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns>
+                <column property="code"/>
+            </columns>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction" text="Сохранить"/>
+            <button id="vypolnena" text="Выполнить" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="aab">
+        <addColumn tableName="ZAYAVKA">
+            <column name="USLUGA" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="2" author="aab">
+        <dropColumn columnName="KLIENT" tableName="ZAYAVKA"/>
+
+        <dropColumn columnName="SERVICE" tableName="ZAYAVKA"/>
+    </changeSet>
+    <changeSet id="3" author="aab">
+        <dropColumn columnName="LOCAL_FILE" tableName="FOTO"/>
+    </changeSet>
+    <changeSet id="4" author="aab">
+        <dropColumn columnName="TELEGRAM_ID" tableName="USER_"/>
+    </changeSet>
+    <changeSet id="5" author="aab">
+        <dropColumn columnName="TYPE_" tableName="USLUGA"/>
+    </changeSet>
+</databaseChangeLog>

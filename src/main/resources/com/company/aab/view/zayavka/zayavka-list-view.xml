@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://zayavkaListView.title"
+      focusComponent="zayavkasDataGrid">
+    <data>
+        <collection id="zayavkasDc"
+                    class="com.company.aab.entity.Zayavka">
+            <fetchPlan extends="_base">
+                <property name="avtomobili" fetchPlan="_base">
+                    <property name="fotos" fetchPlan="_base"/>
+
+                </property>
+            </fetchPlan>
+            <loader id="zayavkasDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Zayavka e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="zayavkasDataGrid.create" text="Создать"/>
+            <!--<button id="editBtn" action="zayavkasDataGrid.edit"/>-->
+            <!--<button id="removeBtn" action="zayavkasDataGrid.remove"/>-->
+        </hbox>
+        <dataGrid id="zayavkasDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="zayavkasDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <!--<action id="remove" type="list_remove"/>-->
+            </actions>
+            <columns resizable="true">
+                <column property="nomer"/>
+                <column property="nachalo"/>
+                <column property="adres"/>
+                <column property="kommentarij"/>
+                <column property="service"/>
+                <column property="comment_address"/>
+                <column property="client"/>
+                <column property="contact_name"/>
+                <column property="contact_number"/>
+                <column property="manager_name"/>
+                <column property="manager_number"/>
+                <column property="username"/>
+                <column property="completed"/>
+                <column property="title"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns="http://jmix.io/schema/rest/services">
+    <service name="flutterService">
+        <method name="getAllActiveZayavkas">
+            <param name="username"/>
+        </method>
+        <method name="getAllUslugas">
+            <param name="username"/>
+        </method>
+        <method name="loadDuties">
+            <param name="username"/>
+        </method>
+        <method name="getAllCheks">
+            <param name="username"/>
+        </method>
+        <method name="saveAvto">
+            <param name="avto"/>
+        </method>
+        <method name="saveDuty">
+            <param name="duty"/>
+        </method>
+        <method name="saveChek">
+            <param name="chek"/>
+        </method>
+        <method name="saveZayavka">
+            <param name="zayavka"/>
+        </method>
+        <method name="updateZayavka">
+            <param name="zayavka"/>
+        </method>
+        <method name="sendZayavkaUpdate">
+            <param name="zayavka"/>
+        </method>
+        <method name="login">
+            <param name="username"/>
+            <param name="password"/>
+        </method>
+    </service>
+</services>

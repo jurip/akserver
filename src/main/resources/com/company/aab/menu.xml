@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+
+    <menu id="application" title="msg://com.company.aab/menu.application.title" opened="true">
+        <item view="User.list" title="msg://com.company.aab.view.user/UserListView.title"/>
+        <item view="Zayavka.list" title="msg://com.company.aab.view.zayavka/zayavkaListView.title"/>
+        <item view="AvtoUsluga.list" title="msg://com.company.aab.view.avtousluga/avtoUslugaListView.title"/>
+        <item view="Usluga.list" title="msg://com.company.aab.view.usluga/uslugaListView.title"/>
+    </menu>
+
+</menu-config>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://zayavkaDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="zayavkaDc"
+                  class="com.company.aab.entity.Zayavka">
+            <fetchPlan extends="_base">
+                <property name="avtomobili" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="avtomobiliDc" property="avtomobili"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="zayavkaDc">
+            <textField id="nomerField" property="nomer" required="true"/>
+            <dateTimePicker id="nachaloField" property="nachalo"/>
+            <textField id="adresField" property="adres"/>
+            <textField id="kommentarijField" property="kommentarij"/>
+            <textField id="serviceField" property="service"/>
+            <textField id="comment_addressField" property="comment_address"/>
+            <textField id="clientField" property="client"/>
+            <textField id="contact_nameField" property="contact_name"/>
+            <textField id="contact_numberField" property="contact_number"/>
+            <textField id="manager_nameField" property="manager_name"/>
+            <textField id="manager_numberField" property="manager_number"/>
+            <textField id="usernameField" property="username"/>
+            <checkbox id="completedField" property="completed"/>
+            <textField id="titleField" property="title"/>
+            <textField id="uslugaField" property="usluga"/>
+        </formLayout>
+        <dataGrid id="avtomobiliDataGrid" dataContainer="avtomobiliDc" width="100%" minHeight="20em"
+                  editorBuffered="false" detailsVisibleOnClick="true">
+            <actions>
+                <action id="edit" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+            </actions>
+            <columns>
+                <column property="nomer" editable="true"/>
+                <column property="marka" editable="true"/>
+            </columns>
+        </dataGrid>
+        <button id="button" text="Добавить автомобиль"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction" text="Сохранить"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
