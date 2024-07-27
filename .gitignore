@@ -1,0 +1,12 @@
+.gradle/*
+.idea/*
+.jmix/*
+.npmrc
+build/*
+frontend/generated/*
+gradle/*
+gradlew
+gradlew.bat
+jmix-studio.xml
+node_modules/*
+
