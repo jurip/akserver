@@ -16,6 +16,7 @@ public class Zayavka {
     public static final String VYPOLNENA = "VYPOLNENA";
 
     public static final String NOVAYA = "NOVAYA";
+
     public static final String UDALENA = "UDALENA";
 
 
@@ -29,9 +30,6 @@ public class Zayavka {
 
     @Column(name = "COMMENT_ADDRESS")
     private String comment_address;
-
-    @Column(name = "USLUGA")
-    private String usluga;
 
     @Column(name = "MESSAGE", length = 2550)
     private String message;
@@ -55,28 +53,11 @@ public class Zayavka {
     @Temporal(TemporalType.TIMESTAMP)
     private Date end_date_time;
 
-    public String getUsluga() {
-        return usluga;
-    }
-
-    public void setUsluga(String usluga) {
-        this.usluga = usluga;
-    }
-
     @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "COMPLETED")
-    private Boolean completed;
-
     @Column(name = "TETLE")
     private String title;
-
-    @Column(name = "TELEGRAM_ID")
-    private String telegramId;
-
-    @Column(name = "BDATA", length = 2555)
-    private String bdata;
 
     @Composition
     @OneToMany(mappedBy = "zayavka")
@@ -183,36 +164,12 @@ public class Zayavka {
         this.username = username;
     }
 
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getBdata() {
-        return bdata;
-    }
-
-    public void setBdata(String bdata) {
-        this.bdata = bdata;
-    }
-
-    public String getTelegramId() {
-        return telegramId;
-    }
-
-    public void setTelegramId(String telegramId) {
-        this.telegramId = telegramId;
     }
 
     public List<Avtomobil> getAvtomobili() {
