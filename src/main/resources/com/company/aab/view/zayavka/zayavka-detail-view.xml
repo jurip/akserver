@@ -24,7 +24,6 @@
             <textField id="nomerField" property="nomer" required="true"/>
             <dateTimePicker id="nachaloField" property="nachalo"/>
             <textField id="adresField" property="adres"/>
-            <textField id="kommentarijField" property="kommentarij"/>
             <textField id="serviceField" property="service"/>
             <textField id="comment_addressField" property="comment_address"/>
             <textField id="clientField" property="client"/>
@@ -33,9 +32,6 @@
             <textField id="manager_nameField" property="manager_name"/>
             <textField id="manager_numberField" property="manager_number"/>
             <textField id="usernameField" property="username"/>
-            <checkbox id="completedField" property="completed"/>
-            <textField id="titleField" property="title"/>
-            <textField id="uslugaField" property="usluga"/>
         </formLayout>
         <dataGrid id="avtomobiliDataGrid" dataContainer="avtomobiliDc" width="100%" minHeight="20em"
                   editorBuffered="false" detailsVisibleOnClick="true">

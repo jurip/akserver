@@ -46,7 +46,6 @@
                 <column property="nomer"/>
                 <column property="nachalo"/>
                 <column property="adres"/>
-                <column property="kommentarij"/>
                 <column property="service"/>
                 <column property="comment_address"/>
                 <column property="client"/>
@@ -55,8 +54,6 @@
                 <column property="manager_name"/>
                 <column property="manager_number"/>
                 <column property="username"/>
-                <column property="completed"/>
-                <column property="title"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

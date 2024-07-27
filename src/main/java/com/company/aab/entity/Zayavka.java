@@ -56,9 +56,6 @@ public class Zayavka {
     @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "TETLE")
-    private String title;
-
     @Composition
     @OneToMany(mappedBy = "zayavka")
     private List<Avtomobil> avtomobili;
@@ -73,9 +70,6 @@ public class Zayavka {
 
     @Column(name = "ADRES")
     private String adres;
-
-    @Column(name = "KOMMENTARIJ")
-    private String kommentarij;
 
     @Column(name = "STATUS")
     private String status;
@@ -164,14 +158,6 @@ public class Zayavka {
         this.username = username;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public List<Avtomobil> getAvtomobili() {
         return avtomobili;
     }
@@ -186,14 +172,6 @@ public class Zayavka {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getKommentarij() {
-        return kommentarij;
-    }
-
-    public void setKommentarij(String kommentarij) {
-        this.kommentarij = kommentarij;
     }
 
     public String getAdres() {

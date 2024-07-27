@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://chekListView.title"
+      focusComponent="cheksDataGrid">
+    <data>
+        <collection id="cheksDc"
+                    class="com.company.aab.entity.Chek">
+            <fetchPlan extends="_base">
+                <property name="fotos" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="cheksDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Chek e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="cheksDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="cheksDataGrid.create"/>
+            <button id="editBtn" action="cheksDataGrid.edit"/>
+            <button id="removeBtn" action="cheksDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="cheksDl"/>
+        </hbox>
+        <dataGrid id="cheksDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="cheksDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="username"/>
+                <column property="date"/>
+                <column property="comment"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>
