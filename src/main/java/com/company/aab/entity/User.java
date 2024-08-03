@@ -62,6 +62,14 @@ public class User implements JmixUserDetails, HasTimeZone {
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
 
+    public String getFcmRegistrationToken() {
+        return fcmRegistrationToken;
+    }
+
+    public void setFcmRegistrationToken(String fcmRegistrationToken) {
+        this.fcmRegistrationToken = fcmRegistrationToken;
+    }
+
     public UUID getId() {
         return id;
     }

@@ -37,7 +37,7 @@ public class BpiumController {
     }
 
     @PostMapping("/bpium")
-    public String hi(@RequestBody String body) {
+    public String hi(@RequestBody String body) throws Exception {
 
         byte[] bytes = body.getBytes();
         body = new String(bytes, StandardCharsets.UTF_8);

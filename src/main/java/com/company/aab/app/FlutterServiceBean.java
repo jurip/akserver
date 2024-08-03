@@ -20,6 +20,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
@@ -42,6 +43,13 @@ public class FlutterServiceBean {
                  return "ok";
 
         return "no";
+    }
+    public String updateUser(String username, String token){
+        User u = dataManager.load(User.class).query("select u from User u where u.username = :username")
+                        .parameter("username", username).one();
+        u.setFcmRegistrationToken(token);
+        dataManager.save(u);
+        return "ok";
     }
     public Zayavka sendZayavkaUpdate(Zayavka zayavka){
         if(zayavka.getId()!=null){
@@ -69,7 +77,7 @@ public class FlutterServiceBean {
 
         return r;
     }
-    public Zayavka updateZayavka(Zayavka zayavka) {
+    public Zayavka updateZayavka(Zayavka zayavka) throws Exception {
             Zayavka z = dataManager.load(Zayavka.class).id(zayavka.getId()).one();
             if (zayavka.getStatus() != null) z.setStatus(zayavka.getStatus());
             if (zayavka.getMessage() != null) z.setMessage(zayavka.getMessage());
@@ -78,11 +86,12 @@ public class FlutterServiceBean {
             if (zayavka.getAdres() != null) z.setAdres(zayavka.getAdres());
             if (zayavka.getComment_address() != null) z.setComment_address(zayavka.getComment_address());
             Zayavka r = dataManager.save(z);
-
+            sendZayavkaToUserApp(r);
             return r;
 
     }
-    public Zayavka saveZayavka(Zayavka zayavka){
+
+    public Zayavka saveZayavka(Zayavka zayavka) throws Exception {
         Zayavka r = dataManager.create(Zayavka.class);
         r.setNomer(zayavka.getNomer());
         r.setNachalo(zayavka.getNachalo());
@@ -101,9 +110,23 @@ public class FlutterServiceBean {
         r.setStatus("NOVAYA");
 
         Zayavka result = dataManager.save(r);
+        sendZayavkaToUserApp(result);
         return result;
     }
+    private void sendZayavkaToUserApp(Zayavka zayavka) throws Exception {
+        if(zayavka.getUsername()==null)
+            return;
+        User user = dataManager.load(User.class)
+                .query("select u from User u where u.username = :username")
+                        .parameter("username", zayavka.getUsername()).one();
 
+
+        if(user.getFcmRegistrationToken()!=null){
+
+                FcmSender.sendMessageToApp(user.getFcmRegistrationToken(), zayavka);
+
+        }
+    }
 
     public List<Usluga> getAllUslugas(String username) {
 
@@ -138,7 +161,7 @@ public class FlutterServiceBean {
                     .list();
 
     }
-    public Chek saveChek(Chek chek){
+    public boolean saveChek(Chek chek){
         Chek c = dataManager.create(Chek.class);
         c.setDate(chek.getDate());
         c.setComment(chek.getComment());
@@ -162,10 +185,14 @@ public class FlutterServiceBean {
             fos.add(new CF(f.getFile().toString()));
         }
         ChekReport result = new ChekReport(new C(re.getUsername(), re.getComment(), fos));
-        sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
-        return re;
+        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
+        if(!sent){
+            c.setComment("Ошибка бипиума, не отправлено");
+            dataManager.save(c);
+        }
+        return sent;
     }
-    public Avtomobil saveAvto(Avtomobil avto) {
+    public boolean saveAvto(Avtomobil avto) {
         Avtomobil a = dataManager.create(Avtomobil.class);
         a.setZayavka(avto.getZayavka());
         a.setMarka(avto.getMarka());
@@ -247,14 +274,21 @@ public class FlutterServiceBean {
         av.setStatus("VYPOLNENA");
         R re = new R();
         re.setReport(av);
-        sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp", re);
-        return r;
+        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp", re);
+        if(!sent){
+            a.setStatus("BIPIUM_ERROR");
+            dataManager.save(a);
+        }
+        return sent;
+
+
     }
 
-    private static void sendToBpium(String url, Object re) {
+    private static boolean sendToBpium(String url, Object re) {
         Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
 
         String json = g.toJson(re);
+        AtomicBoolean ok = new AtomicBoolean(false);
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -266,11 +300,14 @@ public class FlutterServiceBean {
                     .build();
             System.out.print(json);
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenAccept(System.out::println).join();
+                    .thenAccept(stringHttpResponse -> {
+                        ok.set(stringHttpResponse.statusCode() == 200);
+                        System.out.println(stringHttpResponse);}).join();
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        return  ok.get();
     }
 }
 class Avto{
