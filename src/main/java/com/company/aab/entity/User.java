@@ -28,6 +28,9 @@ public class User implements JmixUserDetails, HasTimeZone {
     @JmixGeneratedValue
     private UUID id;
 
+    @Column(name = "FCM_REGISTRATION_TOKEN")
+    private String fcmRegistrationToken;
+
     @Version
     @Column(name = "VERSION", nullable = false)
     private Integer version;

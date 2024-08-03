@@ -43,6 +43,9 @@ dependencies {
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
     implementation 'io.jmix.rest:jmix-rest-starter'
     implementation 'io.jmix.authserver:jmix-authserver-starter'
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation 'com.google.firebase:firebase-admin:8.0.1'
+
 }
 
 test {
