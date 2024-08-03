@@ -1,13 +1,10 @@
 package com.company.aab.app;
 
 import com.company.aab.entity.*;
-import com.company.aab.listener.ZayavkaEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import io.jmix.core.*;
 import io.jmix.core.security.UserRepository;
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
@@ -138,7 +136,7 @@ public class FlutterServiceBean {
                     .list();
 
     }
-    public Chek saveChek(Chek chek){
+    public boolean saveChek(Chek chek){
         Chek c = dataManager.create(Chek.class);
         c.setDate(chek.getDate());
         c.setComment(chek.getComment());
@@ -162,10 +160,14 @@ public class FlutterServiceBean {
             fos.add(new CF(f.getFile().toString()));
         }
         ChekReport result = new ChekReport(new C(re.getUsername(), re.getComment(), fos));
-        sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
-        return re;
+        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
+        if(!sent){
+            c.setComment("Ошибка бипиума, не отправлено");
+            dataManager.save(c);
+        }
+        return sent;
     }
-    public Avtomobil saveAvto(Avtomobil avto) {
+    public boolean saveAvto(Avtomobil avto) {
         Avtomobil a = dataManager.create(Avtomobil.class);
         a.setZayavka(avto.getZayavka());
         a.setMarka(avto.getMarka());
@@ -247,14 +249,21 @@ public class FlutterServiceBean {
         av.setStatus("VYPOLNENA");
         R re = new R();
         re.setReport(av);
-        sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp", re);
-        return r;
+        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp", re);
+        if(!sent){
+            a.setStatus("BIPIUM_ERROR");
+            dataManager.save(a);
+        }
+        return sent;
+
+
     }
 
-    private static void sendToBpium(String url, Object re) {
+    private static boolean sendToBpium(String url, Object re) {
         Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
 
         String json = g.toJson(re);
+        AtomicBoolean ok = new AtomicBoolean(false);
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -266,11 +275,14 @@ public class FlutterServiceBean {
                     .build();
             System.out.print(json);
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenAccept(System.out::println).join();
+                    .thenAccept(stringHttpResponse -> {
+                        ok.set(stringHttpResponse.statusCode() == 200);
+                        System.out.println(stringHttpResponse);}).join();
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        return  ok.get();
     }
 }
 class Avto{
