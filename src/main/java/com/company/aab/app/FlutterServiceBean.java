@@ -6,7 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import io.jmix.core.*;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.security.UserRepository;
+import jakarta.persistence.*;
 import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +35,13 @@ public class FlutterServiceBean {
     @Autowired
     UserRepository userRepository;
 
-    public FlutterServiceBean(DataManager dataManager) {
+    public FlutterServiceBean(DataManager dataManager, EntityImportExport entityImportExport) {
         this.dataManager = dataManager;
+        this.entityImportExport = entityImportExport;
     }
+
+    private final EntityImportExport entityImportExport;
+
     public String login(String username, String password){
         UserDetails userDetails = userRepository.loadUserByUsername(username);
 
@@ -77,7 +83,7 @@ public class FlutterServiceBean {
 
         return r;
     }
-    public Zayavka updateZayavka(Zayavka zayavka) throws Exception {
+    public Zayavka updateZayavka(ZayavkaDTO zayavka) throws Exception {
             Zayavka z = dataManager.load(Zayavka.class).id(zayavka.getId()).one();
             if (zayavka.getStatus() != null) z.setStatus(zayavka.getStatus());
             if (zayavka.getMessage() != null) z.setMessage(zayavka.getMessage());
@@ -86,13 +92,14 @@ public class FlutterServiceBean {
             if (zayavka.getAdres() != null) z.setAdres(zayavka.getAdres());
             if (zayavka.getComment_address() != null) z.setComment_address(zayavka.getComment_address());
             Zayavka r = dataManager.save(z);
-            sendZayavkaToUserApp(r);
+            sendZayavkaToUserApp(zayavka);
             return r;
 
     }
 
-    public Zayavka saveZayavka(Zayavka zayavka) throws Exception {
+    public Zayavka saveZayavka(ZayavkaDTO zayavka) throws Exception {
         Zayavka r = dataManager.create(Zayavka.class);
+
         r.setNomer(zayavka.getNomer());
         r.setNachalo(zayavka.getNachalo());
         r.setEnd_date_time(zayavka.getEnd_date_time());
@@ -106,14 +113,29 @@ public class FlutterServiceBean {
         r.setManager_name(zayavka.getManager_name());
         r.setManager_number(zayavka.getManager_number());
         r.setUsername(zayavka.getUsername());
+        r.setLat(zayavka.getLat());
+        r.setLng(zayavka.getLng());
 
         r.setStatus("NOVAYA");
+        SaveContext saveContext = new SaveContext();
+        for( Avto a: zayavka.getAvtomobili()){
+            Avtomobil avto = dataManager.create(Avtomobil.class);
 
-        Zayavka result = dataManager.save(r);
-        sendZayavkaToUserApp(result);
-        return result;
+            a.setId(avto.getId().toString());
+
+            avto.setZayavka(r);
+            avto.setNomer(a.getNomer_avto());
+            avto.setMarka(a.getMarka_avto());
+            avto.setNomerAG(a.getNomerAG());
+            saveContext.saving(avto);
+        }
+        saveContext.saving(r);
+        EntitySet result = dataManager.save(saveContext);
+        zayavka.setId(result.get(r).getId().toString());
+        sendZayavkaToUserApp(zayavka);
+        return result.get(r);
     }
-    private void sendZayavkaToUserApp(Zayavka zayavka) throws Exception {
+    private void sendZayavkaToUserApp(ZayavkaDTO zayavka) throws Exception {
         if(zayavka.getUsername()==null)
             return;
         User user = dataManager.load(User.class)
@@ -123,14 +145,14 @@ public class FlutterServiceBean {
 
         if(user.getFcmRegistrationToken()!=null){
 
-                FcmSender.sendMessageToApp(user.getFcmRegistrationToken(), zayavka);
+                FcmSender.sendMessageToApp(user.getFcmRegistrationToken(),zayavka);
 
         }
     }
 
     public List<Usluga> getAllUslugas(String username) {
 
-        List<Usluga> l = dataManager.load(Usluga.class).query("select c from Usluga c")
+        List<Usluga> l = dataManager.load(Usluga.class).query("select c from Usluga c order by c.prioritet")
                 .list();
         return l;
     }
@@ -140,11 +162,25 @@ public class FlutterServiceBean {
                 .list();
         return l;
     }
+    @Autowired
+    private FetchPlans fetchPlans;
+
     public List<Zayavka> getAllActiveZayavkas(String username) {
+        FetchPlan fetchPlan = fetchPlans.builder(Zayavka.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("avtomobili", fetchPlans.builder(Avtomobil.class).addFetchPlan(FetchPlan.BASE))
+                .build();
 
         List<Zayavka> l = dataManager.load(Zayavka.class).query("select c from Zayavka c where c.username = :username and c.status = :status")
-                .parameter("username", username).parameter("status", "NOVAYA").list();
+                .parameter("username", username).parameter("status", "NOVAYA").fetchPlan(fetchPlan).list();
         return l;
+    }
+    public List<User> loadUser(String username){
+        return dataManager.load(User.class)
+                .query("select u from User u where u.username = :username")
+                .parameter("username", username).list();
+
+
     }
 
     public Duty saveDuty(Duty duty){
@@ -193,10 +229,19 @@ public class FlutterServiceBean {
         return sent;
     }
     public boolean saveAvto(Avtomobil avto) {
-        Avtomobil a = dataManager.create(Avtomobil.class);
-        a.setZayavka(avto.getZayavka());
-        a.setMarka(avto.getMarka());
-        a.setNomer(avto.getNomer());
+        Avtomobil a;
+
+        if(avto.getId()==null) {
+             a = dataManager.create(Avtomobil.class);
+            a.setZayavka(avto.getZayavka());
+            a.setMarka(avto.getMarka());
+            a.setNomer(avto.getNomer());
+            a.setNomerAG(avto.getNomerAG());
+
+        }else {
+            a = dataManager.load(Avtomobil.class).id(avto.getId()).one();
+        }
+
         a.setDate(avto.getDate());
         a.setUsername(a.getUsername());
         a.setStatus("VYPOLNENA");
@@ -207,6 +252,15 @@ public class FlutterServiceBean {
             nf.setFile(f.getFile());
 
             fs.add(nf);
+
+        }
+        List<OborudovanieFoto> ofs = new ArrayList<OborudovanieFoto>();
+        for (Foto f : avto.getFotos()){
+            OborudovanieFoto nf = dataManager.create(OborudovanieFoto.class);
+            nf.setAvtomobil(a);
+            nf.setFile(f.getFile());
+
+            ofs.add(nf);
 
         }
         List<Oborudovanie> os = new ArrayList<Oborudovanie>();
@@ -233,6 +287,9 @@ public class FlutterServiceBean {
         for (Foto entity : fs) {
             saveContext.saving( entity);
         }
+        for (OborudovanieFoto entity : ofs) {
+            saveContext.saving( entity);
+        }
         for (Oborudovanie entity : os) {
             saveContext.saving( entity);
         }
@@ -248,6 +305,7 @@ public class FlutterServiceBean {
         av.setZayavka_id(r.getZayavka().getId().toString());
         av.setMarka_avto(r.getMarka());
         av.setNomer_avto(r.getNomer());
+        av.setNomerAG(r.getNomerAG());
         av.setDate(r.getDate());
         av.setComment("Выполнил");
         List<O> b = new ArrayList<O>();
@@ -271,10 +329,17 @@ public class FlutterServiceBean {
             fo.add(u);
         }
         av.setFotos(fo);
+        List<OF> ofo = new ArrayList<OF>();
+        for (OborudovanieFoto o : avto.getOborudovanieFotos()){
+            OF u = new OF();
+            u.setFile(o.getFile().toString());
+            ofo.add(u);
+        }
+        av.setOborudovanieFotos(ofo);
         av.setStatus("VYPOLNENA");
         R re = new R();
         re.setReport(av);
-        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp", re);
+        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp?async=true", re);
         if(!sent){
             a.setStatus("BIPIUM_ERROR");
             dataManager.save(a);
@@ -310,16 +375,222 @@ public class FlutterServiceBean {
         return  ok.get();
     }
 }
+class ZayavkaDTO{
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String lat;
+
+    private String lng;
+
+    private String service;
+
+    private String comment_address;
+
+    private String message;
+
+    private String client;
+
+    private String contact_name;
+
+    private String contact_number;
+
+    private String manager_name;
+
+    private String manager_number;
+
+
+    private Date end_date_time;
+
+
+    private String username;
+
+    private List<Avto> avtomobili;
+
+    private String nomer;
+
+    private Date nachalo;
+
+
+
+    private String adres;
+
+
+    private String status;
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getComment_address() {
+        return comment_address;
+    }
+
+    public void setComment_address(String comment_address) {
+        this.comment_address = comment_address;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public String getContact_name() {
+        return contact_name;
+    }
+
+    public void setContact_name(String contact_name) {
+        this.contact_name = contact_name;
+    }
+
+    public String getContact_number() {
+        return contact_number;
+    }
+
+    public void setContact_number(String contact_number) {
+        this.contact_number = contact_number;
+    }
+
+    public String getManager_name() {
+        return manager_name;
+    }
+
+    public void setManager_name(String manager_name) {
+        this.manager_name = manager_name;
+    }
+
+    public String getManager_number() {
+        return manager_number;
+    }
+
+    public void setManager_number(String manager_number) {
+        this.manager_number = manager_number;
+    }
+
+    public Date getEnd_date_time() {
+        return end_date_time;
+    }
+
+    public void setEnd_date_time(Date end_date_time) {
+        this.end_date_time = end_date_time;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public List<Avto> getAvtomobili() {
+        return avtomobili;
+    }
+
+    public void setAvtomobili(List<Avto> avtomobili) {
+        this.avtomobili = avtomobili;
+    }
+
+    public String getNomer() {
+        return nomer;
+    }
+
+    public void setNomer(String nomer) {
+        this.nomer = nomer;
+    }
+
+    public Date getNachalo() {
+        return nachalo;
+    }
+
+    public void setNachalo(Date nachalo) {
+        this.nachalo = nachalo;
+    }
+
+    public String getAdres() {
+        return adres;
+    }
+
+    public void setAdres(String adres) {
+        this.adres = adres;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
 class Avto{
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     private String zayavka_id;
     private String marka_avto;
     private String nomer_avto;
+    private String nomerAG;
     private Date date;
     private String comment;
     private List<O> barcode;
     private List<U> performance_service;
     private List<F> fotos;
+    private List<OF> oborudovanieFotos;
     private String status;
+
+    public List<OF> getOborudovanieFotos() {
+        return oborudovanieFotos;
+    }
+
+    public void setOborudovanieFotos(List<OF> oborudovanieFotos) {
+        this.oborudovanieFotos = oborudovanieFotos;
+    }
 
     public Date getDate() {
         return date;
@@ -361,6 +632,13 @@ class Avto{
         this.nomer_avto = nomer_avto;
     }
 
+    public String getNomerAG() {
+        return nomerAG;
+    }
+
+    public void setNomerAG(String nomerAG) {
+        this.nomerAG = nomerAG;
+    }
 
     public List<O> getBarcode() {
         return barcode;
@@ -460,6 +738,17 @@ class U{
     }
 }
 class F{
+    private  String file;
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+}
+class OF{
     private  String file;
 
     public String getFile() {

@@ -20,6 +20,11 @@ public interface UserManagementRole {
     @EntityPolicy(entityClass = Foto.class, actions = EntityPolicyAction.ALL)
     void foto();
 
+    @EntityAttributePolicy(entityClass = OborudovanieFoto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = OborudovanieFoto.class, actions = EntityPolicyAction.ALL)
+    void oborudovanieFoto();
+
+
     @EntityAttributePolicy(entityClass = Avtomobil.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = Avtomobil.class, actions = EntityPolicyAction.ALL)
     void avtomobil();

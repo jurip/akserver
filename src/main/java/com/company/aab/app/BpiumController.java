@@ -48,7 +48,7 @@ public class BpiumController {
                 .addLocalProperties()
                 .build();
         Collection<Object> j = entityImportExport.importEntitiesFromJson(body, importPlan);
-        Zayavka z = (Zayavka) j;
+        ZayavkaDTO z = (ZayavkaDTO) j;
         Zayavka r = fl.saveZayavka(z);
         return entityImportExport.exportEntitiesToJSON(List.of(r));
        // return body;

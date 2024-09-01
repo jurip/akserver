@@ -35,6 +35,9 @@
             <param name="username"/>
             <param name="password"/>
         </method>
+        <method name="loadUser">
+            <param name="username"/>
+        </method>
         <method name="updateUser">
             <param name="username"/>
             <param name="token"/>

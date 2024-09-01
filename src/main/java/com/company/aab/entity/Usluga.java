@@ -26,6 +26,17 @@ public class Usluga {
     @Column(name = "NAME")
     private String title;
 
+    @Column(name = "PRIORITET", length = 1)
+    private String prioritet;
+
+    public String getPrioritet() {
+        return prioritet;
+    }
+
+    public void setPrioritet(String prioritet) {
+        this.prioritet = prioritet;
+    }
+
     public String getCode() {
         return code;
     }

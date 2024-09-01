@@ -8,6 +8,8 @@
         <item view="Usluga.list" title="msg://com.company.aab.view.usluga/uslugaListView.title"/>
         <item view="Chek.list" title="msg://com.company.aab.view.chek/chekListView.title"/>
         <item view="Oborudovanie.list" title="msg://com.company.aab.view.oborudovanie/oborudovanieListView.title"/>
+        <item view="BlankView" title="msg://com.company.aab.view.blank/blankView.title"/>
+
     </menu>
 
 </menu-config>

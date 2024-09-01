@@ -6,8 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!-- DO NOT REMOVE. This changelog is required for user management. -->
-    <changeSet id="1" author="aab" context="!cuba">
-        <sqlFile dbms="hsqldb" path="com/company/aab/liquibase/changelog/raboty.sql" />
+    <changeSet id="16" author="aab" context="!cuba">
+        <sqlFile dbms="hsqldb" path="com/company/aab/liquibase/changelog/raboty5.sql" />
     </changeSet>
 
 </databaseChangeLog>

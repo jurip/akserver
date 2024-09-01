@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://blankView.title">
+    <layout>
+        <html id="html">
+            <content>
+                <![CDATA[
+        <main>
+
+<div id="map"></div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoianVyaWFuMTIzIiwiYSI6ImNrNzdlbzJpZDA2ZmgzZnM0Z25sbzZiZm4ifQ.vX6o7DJz3tNoH_SpYrnO0Q';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+        zoom: 9 // starting zoom
+    });
+</script>
+
+
+        </main>
+    ]]>
+            </content>
+        </html>
+    </layout>
+</view>

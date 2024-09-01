@@ -25,6 +25,12 @@ public class Zayavka {
     @Id
     private UUID id;
 
+    @Column(name = "LAT", length = 25)
+    private String lat;
+
+    @Column(name = "LNG", length = 25)
+    private String lng;
+
     @Column(name = "SERVICE")
     private String service;
 
@@ -77,6 +83,22 @@ public class Zayavka {
     @Column(name = "VERSION", nullable = false)
     @Version
     private Integer version;
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
 
     public Date getEnd_date_time() {
         return end_date_time;

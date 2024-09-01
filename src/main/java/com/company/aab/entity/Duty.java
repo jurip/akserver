@@ -16,6 +16,9 @@ public class Duty {
     @Id
     private UUID id;
 
+    @Column(name = "PRIORITET", length = 1)
+    private String prioritet;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_FROM")
     private Date date_from;
@@ -32,6 +35,14 @@ public class Duty {
 
     @Column(name = "USERNAME")
     private String username;
+
+    public String getPrioritet() {
+        return prioritet;
+    }
+
+    public void setPrioritet(String prioritet) {
+        this.prioritet = prioritet;
+    }
 
     public String getUsername() {
         return username;

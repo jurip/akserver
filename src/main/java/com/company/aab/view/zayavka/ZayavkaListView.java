@@ -11,4 +11,5 @@ import io.jmix.flowui.view.*;
 @LookupComponent("zayavkasDataGrid")
 @DialogMode(width = "64em")
 public class ZayavkaListView extends StandardListView<Zayavka> {
+
 }

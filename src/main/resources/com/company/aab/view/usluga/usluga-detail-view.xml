@@ -19,6 +19,7 @@
     <layout>
         <formLayout id="form" dataContainer="uslugaDc">
             <textField id="nameField" property="title"/>
+            <textField id="prioritetField" property="prioritet"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

@@ -25,6 +25,10 @@ public interface MontazhnikRole {
     @EntityPolicy(entityClass = Foto.class, actions = EntityPolicyAction.ALL)
     void foto();
 
+    @EntityAttributePolicy(entityClass = OborudovanieFoto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = OborudovanieFoto.class, actions = EntityPolicyAction.ALL)
+    void oborudovanieFoto();
+
     @EntityAttributePolicy(entityClass = Zayavka.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = Zayavka.class, actions = EntityPolicyAction.ALL)
     void zayavka();

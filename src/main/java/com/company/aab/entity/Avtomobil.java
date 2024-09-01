@@ -43,6 +43,10 @@ public class Avtomobil {
 
     @Composition
     @OneToMany(mappedBy = "avtomobil")
+    private List<OborudovanieFoto> oborudovanieFotos;
+
+    @Composition
+    @OneToMany(mappedBy = "avtomobil")
     private List<AvtoUsluga> performance_service;
 
     @Column(name = "NOMER")
@@ -50,6 +54,16 @@ public class Avtomobil {
 
     @Column(name = "MARKA")
     private String marka;
+    @Column(name = "NOMER_AG")
+    private String nomerAG;
+
+    public String getNomerAG() {
+        return nomerAG;
+    }
+
+    public void setNomerAG(String nomerAG) {
+        this.nomerAG = nomerAG;
+    }
 
     @Column(name = "USERNAME")
     private String username;
@@ -149,5 +163,13 @@ public class Avtomobil {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public List<OborudovanieFoto> getOborudovanieFotos() {
+        return oborudovanieFotos;
+    }
+
+    public void setOborudovanieFotos(List<OborudovanieFoto> oborudovanieFotos) {
+        this.oborudovanieFotos = oborudovanieFotos;
     }
 }
