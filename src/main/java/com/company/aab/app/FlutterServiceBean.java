@@ -43,7 +43,12 @@ public class FlutterServiceBean {
     private final EntityImportExport entityImportExport;
 
     public String login(String username, String password){
-        UserDetails userDetails = userRepository.loadUserByUsername(username);
+        UserDetails userDetails;
+        try{
+         userDetails= userRepository.loadUserByUsername(username);
+        }catch(Exception e){
+            return "no"; 
+        }
 
             if(passwordEncoder.matches(password, userDetails.getPassword()))
                  return "ok";

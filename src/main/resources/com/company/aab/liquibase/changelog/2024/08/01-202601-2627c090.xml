@@ -5,7 +5,5 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
-    <changeSet id="1" author="akserver">
-        <dropColumn columnName="FCM_REGISTRATION_TOKEN" tableName="USER_"/>
-    </changeSet>
+  
 </databaseChangeLog>
