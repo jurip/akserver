@@ -4,6 +4,10 @@
         <method name="getAllActiveZayavkas">
             <param name="username"/>
         </method>
+        <method name="getAllReadyZayavkas">
+            <param name="username"/>
+        </method>
+
         <method name="getAllUslugas">
             <param name="username"/>
         </method>

@@ -171,14 +171,23 @@ public class FlutterServiceBean {
     private FetchPlans fetchPlans;
 
     public List<Zayavka> getAllActiveZayavkas(String username) {
+        return getAllZayavkas( username, "NOVAYA");
+
+    }
+    public List<Zayavka> getAllReadyZayavkas(String username) {
+        return getAllZayavkas( username, null);
+
+    }
+
+    public List<Zayavka> getAllZayavkas(String username, String status) {
         FetchPlan fetchPlan = fetchPlans.builder(Zayavka.class)
                 .addFetchPlan(FetchPlan.BASE)
                 .add("avtomobili", fetchPlans.builder(Avtomobil.class).addFetchPlan(FetchPlan.BASE))
                 .build();
 
-        List<Zayavka> l = dataManager.load(Zayavka.class).query("select c from Zayavka c where c.username = :username and c.status = :status")
-                .parameter("username", username).parameter("status", "NOVAYA").fetchPlan(fetchPlan).list();
-        return l;
+        FluentLoader.ByQuery<Zayavka> l = dataManager.load(Zayavka.class).query("select c from Zayavka c where c.username = :username")
+                .parameter("username", username);
+        return l.fetchPlan(fetchPlan).list();
     }
     public List<User> loadUser(String username){
         return dataManager.load(User.class)
@@ -235,8 +244,9 @@ public class FlutterServiceBean {
     }
     public boolean saveAvto(Avtomobil avto) {
         Avtomobil a;
+        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avto.getId()).optional();
 
-        if(avto.getId()==null) {
+        if(ra.isEmpty()) {
              a = dataManager.create(Avtomobil.class);
             a.setZayavka(avto.getZayavka());
             a.setMarka(avto.getMarka());
@@ -244,9 +254,9 @@ public class FlutterServiceBean {
             a.setNomerAG(avto.getNomerAG());
 
         }else {
-            a = dataManager.load(Avtomobil.class).id(avto.getId()).one();
+            a = ra.get();
         }
-
+        a.setComment(avto.getComment());
         a.setDate(avto.getDate());
         a.setUsername(a.getUsername());
         a.setStatus("VYPOLNENA");
@@ -283,6 +293,7 @@ public class FlutterServiceBean {
             AvtoUsluga of = dataManager.create(AvtoUsluga.class);
             of.setAvtomobil(a);
             of.setTitle(u.getTitle());
+            of.setDop(u.getDop());
             us.add(of);
             //dataManager.save(nf);
         }
@@ -312,7 +323,7 @@ public class FlutterServiceBean {
         av.setNomer_avto(r.getNomer());
         av.setNomerAG(r.getNomerAG());
         av.setDate(r.getDate());
-        av.setComment("Выполнил");
+        av.setComment(r.getComment());
         List<O> b = new ArrayList<O>();
         for (Oborudovanie o : avto.getBarcode()){
             O ob = new O();
@@ -324,6 +335,7 @@ public class FlutterServiceBean {
         for (AvtoUsluga o : avto.getPerformance_service()){
             U u = new U();
             u.setTitle(o.getTitle());
+            u.setDop(o.getDop());
             usl.add(u);
         }
         av.setPerformance_service(usl);
@@ -733,6 +745,15 @@ class CF{
 }
 class U{
    private String title;
+   private String dop;
+
+    public String getDop() {
+        return dop;
+    }
+
+    public void setDop(String dop) {
+        this.dop = dop;
+    }
 
     public String getTitle() {
         return title;

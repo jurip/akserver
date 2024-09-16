@@ -32,6 +32,8 @@ public class AvtoUsluga {
     @InstanceName
     @Column(name = "TITLE")
     private String title;
+    @Column(name="DOP")
+    private String dop;
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
     @JoinColumn(name = "AVTOMOBIL_ID", nullable = false)
@@ -65,5 +67,13 @@ public class AvtoUsluga {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getDop() {
+        return dop;
+    }
+
+    public void setDop(String dop) {
+        this.dop = dop;
     }
 }

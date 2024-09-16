@@ -37,6 +37,9 @@ public class Avtomobil {
     @Column(name = "STATUS")
     private String status = Avtomobil.NOVAYA;
 
+    @Column(name = "COMMENT")
+    private String comment;
+
     @Composition
     @OneToMany(mappedBy = "avtomobil")
     private List<Foto> fotos;
@@ -76,6 +79,14 @@ public class Avtomobil {
     @Column(name = "VERSION", nullable = false)
     @Version
     private Integer version;
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
     public Date getDate() {
         return date;
