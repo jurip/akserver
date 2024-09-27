@@ -1,6 +1,7 @@
 package com.company.aab.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -59,6 +60,18 @@ public class Avtomobil {
     private String marka;
     @Column(name = "NOMER_AG")
     private String nomerAG;
+
+    @Column(name = "TENANT_ATTRIBUTE")
+    @TenantId
+    private String tenantAttribute;
+
+    public String getTenantAttribute() {
+        return tenantAttribute;
+    }
+
+    public void setTenantAttribute(String tenantAttribute) {
+        this.tenantAttribute = tenantAttribute;
+    }
 
     public String getNomerAG() {
         return nomerAG;

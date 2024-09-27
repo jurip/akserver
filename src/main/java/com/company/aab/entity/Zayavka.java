@@ -1,5 +1,6 @@
 package com.company.aab.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -84,6 +85,20 @@ public class Zayavka {
     @Version
     private Integer version;
 
+    @Column(name = "TENANT_ATTRIBUTE")
+    @TenantId
+    private String tenantAttribute;
+
+    public String getTenantAttribute() {
+        return tenantAttribute;
+    }
+
+    public void setTenantAttribute(String tenantAttribute) {
+        this.tenantAttribute = tenantAttribute;
+    }
+
+
+
     public String getLng() {
         return lng;
     }
@@ -91,6 +106,10 @@ public class Zayavka {
     public void setLng(String lng) {
         this.lng = lng;
     }
+
+
+
+
 
     public String getLat() {
         return lat;

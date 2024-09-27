@@ -11,27 +11,15 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "OBORUDOVANIE_FOTO",  indexes = {
-        @Index(name = "IDX_OBORUDOVANIE_FOTO_AVTOMOBIL", columnList = "AVTOMOBIL_ID")
+@Table(name = "PFOTO", indexes = {
+        @Index(name = "IDX_PFOTO_PEREMESHENIE", columnList = "PEREMESHENIE_ID")
 })
 @Entity
-public class OborudovanieFoto {
+public class PFoto {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id
     private UUID id;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-
-    @Column(name = "FILE_", length = 1024)
-    private FileRef file;
 
     @Column(name = "TENANT_ATTRIBUTE")
     @TenantId
@@ -45,22 +33,32 @@ public class OborudovanieFoto {
         this.tenantAttribute = tenantAttribute;
     }
 
+    @Column(name = "FILE_", length = 1024)
+    private FileRef file;
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
-    @JoinColumn(name = "AVTOMOBIL_ID")
+    @JoinColumn(name = "PEREMESHENIE_ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Avtomobil avtomobil;
+    private Peremeshenie peremeshenie;
 
     @Column(name = "VERSION", nullable = false)
     @Version
     private Integer version;
 
-    public Avtomobil getAvtomobil() {
-        return avtomobil;
+    public Integer getVersion() {
+        return version;
     }
 
-    public void setAvtomobil(Avtomobil avtomobil) {
-        this.avtomobil = avtomobil;
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Peremeshenie getPeremeshenie() {
+        return peremeshenie;
+    }
+
+    public void setPeremeshenie(Peremeshenie p) {
+        this.peremeshenie = p;
     }
 
     public FileRef getFile() {
@@ -71,13 +69,11 @@ public class OborudovanieFoto {
         this.file = file;
     }
 
-    public Integer getVersion() {
-        return version;
+    public UUID getId() {
+        return id;
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
+    public void setId(UUID id) {
+        this.id = id;
     }
-
-
 }

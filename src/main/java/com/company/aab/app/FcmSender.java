@@ -2,6 +2,7 @@ package com.company.aab.app;
 
 import com.company.aab.entity.Avtomobil;
 import com.company.aab.entity.Zayavka;
+import com.github.javaparser.utils.Log;
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -12,11 +13,17 @@ import com.google.gson.GsonBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class FcmSender {
 
-  public static void sendMessageToApp(String token,ZayavkaDTO zayavka) throws Exception {
+
+  public static void sendMessageToApp(String token,Zayavka zayavka)  {
+    sendMessageToApp(token, ZayavkaDTO.getFrom(zayavka));
+  }
+
+  public static void sendMessageToApp(String token,ZayavkaDTO zayavka) {
 
     List<Avto> as = zayavka.getAvtomobili();
     
@@ -34,22 +41,23 @@ public class FcmSender {
         Message.builder()
 
             .putData("id", zayavka.getId().toString())
-            .putData("message", zayavka.getMessage())
-                .putData("adres", zayavka.getAdres())
-                .putData("nomer", zayavka.getNomer())
+            .putData("message", zayavka.getMessage()!=null?zayavka.getMessage():"")
+                .putData("adres", zayavka.getAdres()!=null?zayavka.getAdres():"")
+                .putData("nomer", zayavka.getNomer()!=null?zayavka.getNomer():"")
 
-                .putData("nachalo", df.format( zayavka.getNachalo()))
-                .putData("end_date_time", df.format(zayavka.getEnd_date_time()))
-                .putData("comment_address", zayavka.getComment_address())
-                .putData("service", zayavka.getService())
-                .putData("client", zayavka.getClient())
-                .putData("contact_name", zayavka.getContact_name())
-                .putData("contact_number", zayavka.getContact_number())
-                .putData("manager_name", zayavka.getManager_name())
-                .putData("manager_number", zayavka.getManager_number())
-                .putData("lat", zayavka.getLat())
-                .putData("lng", zayavka.getLng())
-                .putData("avtomobili", g.toJson( zayavka.getAvtomobili()))
+                .putData("nachalo", df.format(zayavka.getNachalo()!=null? zayavka.getNachalo():new Date()))
+                .putData("end_date_time", df.format(zayavka.getEnd_date_time()!=null?zayavka.getEnd_date_time():new Date()))
+                .putData("comment_address",zayavka.getComment_address()!=null? zayavka.getComment_address():"")
+                .putData("service", zayavka.getService()!=null?zayavka.getService():"")
+                .putData("client", zayavka.getClient()!=null?zayavka.getClient():"")
+                .putData("contact_name", zayavka.getContact_name()!=null?zayavka.getContact_name():"")
+                .putData("contact_number", zayavka.getContact_number()!=null?zayavka.getContact_number():"")
+                .putData("manager_name", zayavka.getManager_name()!=null?zayavka.getManager_name():"")
+                .putData("manager_number", zayavka.getManager_number()!=null?zayavka.getManager_number():"")
+                .putData("lat", zayavka.getLat()!=null?zayavka.getLat():"")
+                .putData("lng", zayavka.getLng()!=null?zayavka.getLng():"")
+                .putData("avtomobili", g.toJson( zayavka.getAvtomobili()!=null
+                        ?zayavka.getAvtomobili():List.of()))
 
 
 
@@ -64,7 +72,7 @@ public class FcmSender {
     try {
       String result = FirebaseMessaging.getInstance().send(message);
     }catch (Exception e){
-
+      Log.error(e);
     }
 
     

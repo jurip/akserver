@@ -101,9 +101,10 @@ public class FlutterServiceBean {
             return r;
 
     }
-
+//avtokonnekt
     public Zayavka saveZayavka(ZayavkaDTO zayavka) throws Exception {
         Zayavka r = dataManager.create(Zayavka.class);
+        r.setTenantAttribute("avtokonnekt");
 
         r.setNomer(zayavka.getNomer());
         r.setNachalo(zayavka.getNachalo());
@@ -132,6 +133,7 @@ public class FlutterServiceBean {
             avto.setNomer(a.getNomer_avto());
             avto.setMarka(a.getMarka_avto());
             avto.setNomerAG(a.getNomerAG());
+            avto.setTenantAttribute("avtokonnekt");
             saveContext.saving(avto);
         }
         saveContext.saving(r);
@@ -167,6 +169,12 @@ public class FlutterServiceBean {
                 .list();
         return l;
     }
+    public List<Chek> getAllPeremeshenies(String username) {
+
+        List<Chek> l = dataManager.load(Chek.class).query("select c from Peremeshenie c where c.username =:username and c.status='NOVAYA'")
+                .list();
+        return l;
+    }
     @Autowired
     private FetchPlans fetchPlans;
 
@@ -183,11 +191,12 @@ public class FlutterServiceBean {
         FetchPlan fetchPlan = fetchPlans.builder(Zayavka.class)
                 .addFetchPlan(FetchPlan.BASE)
                 .add("avtomobili", fetchPlans.builder(Avtomobil.class).addFetchPlan(FetchPlan.BASE))
-                .build();
+               .build();
 
         FluentLoader.ByQuery<Zayavka> l = dataManager.load(Zayavka.class).query("select c from Zayavka c where c.username = :username")
                 .parameter("username", username);
-        return l.fetchPlan(fetchPlan).list();
+        List<Zayavka> r = l.fetchPlan(fetchPlan).list();
+        return r;
     }
     public List<User> loadUser(String username){
         return dataManager.load(User.class)
@@ -216,6 +225,7 @@ public class FlutterServiceBean {
         c.setDate(chek.getDate());
         c.setComment(chek.getComment());
         c.setUsername(chek.getUsername());
+        c.setTenantAttribute(chek.getTenantAttribute());
 
         SaveContext saveContext = new SaveContext();
 
@@ -224,80 +234,148 @@ public class FlutterServiceBean {
             ChekFoto nf = dataManager.create(ChekFoto.class);
             nf.setChek(c);
             nf.setFile(entity.getFile());
+            nf.setTenantAttribute(c.getTenantAttribute());
             fs.add(nf);
             saveContext.saving(nf);
         }
         saveContext.saving(c);
         EntitySet d = dataManager.save(saveContext);
         Chek re = d.get(c);
-        List<CF> fos = new ArrayList<CF>();
-        for (ChekFoto f :re.getFotos()){
-            fos.add(new CF(f.getFile().toString()));
+        if("avtokonnekt".equals(c.getTenantAttribute())) {
+            List<CF> fos = new ArrayList<CF>();
+            for (ChekFoto f : re.getFotos()) {
+                fos.add(new CF(f.getFile().toString()));
+            }
+            ChekReport result = new ChekReport(new C(re.getUsername().split("\\|")[1], re.getComment(), fos));
+            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
+            if (!sent) {
+                c.setComment("Ошибка бипиума, не отправлено");
+                dataManager.save(c);
+            }
+            return sent;
         }
-        ChekReport result = new ChekReport(new C(re.getUsername(), re.getComment(), fos));
-        boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
-        if(!sent){
-            c.setComment("Ошибка бипиума, не отправлено");
-            dataManager.save(c);
-        }
-        return sent;
+        return true;
+
     }
-    public boolean saveAvto(Avtomobil avto) {
-        Avtomobil a;
-        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avto.getId()).optional();
+
+    public boolean savePeremeshenie(Peremeshenie peremeshenie){
+        Peremeshenie c = dataManager.create(Peremeshenie.class);
+        c.setDate(peremeshenie.getDate());
+        c.setComment(peremeshenie.getComment());
+        c.setUsername(peremeshenie.getUsername());
+        c.setTenantAttribute(peremeshenie.getTenantAttribute());
+
+        SaveContext saveContext = new SaveContext();
+
+        List<PFoto> fs = new ArrayList<PFoto>();
+        for (PFoto entity : peremeshenie.getFotos()) {
+            PFoto nf = dataManager.create(PFoto.class);
+            nf.setPeremeshenie(c);
+            nf.setFile(entity.getFile());
+            nf.setTenantAttribute(c.getTenantAttribute());
+            fs.add(nf);
+            saveContext.saving(nf);
+        }
+
+        List<POborudovanie> os = new ArrayList<POborudovanie>();
+        for (POborudovanie o : peremeshenie.getBarcode()){
+            POborudovanie of = dataManager.create(POborudovanie.class);
+            of.setPeremeshenie(c);
+            of.setCode(o.getCode());
+            of.setTenantAttribute(c.getTenantAttribute());
+            os.add(of);
+            saveContext.saving(of);
+        }
+
+
+
+        saveContext.saving(c);
+        EntitySet d = dataManager.save(saveContext);
+        Peremeshenie re = d.get(c);
+        if("avtokonnekt".equals(c.getTenantAttribute())) {
+            List<PerF> fos = new ArrayList<PerF>();
+            for (PFoto f : re.getFotos()) {
+                fos.add(new PerF(f.getFile().toString()));
+            }
+            List<O> pob = new ArrayList<O>();
+            for (POborudovanie f : re.getBarcode()) {
+                pob.add(new O(f.getCode()));
+            }
+            PerReport result = new PerReport(new Per(re.getUsername().split("\\|")[1], re.getComment(), fos, pob));
+            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/peremeshenie", result);
+            if (!sent) {
+                c.setComment("Ошибка бипиума, не отправлено");
+                dataManager.save(c);
+            }
+            return sent;
+        }
+        return true;
+    }
+    public Avtomobil saveAvtomobil(Avtomobil avto){
+        Avtomobil a = dataManager.save(avto);
+        return a;
+    }
+    //iz mp
+    public boolean saveAvto(Avtomobil avtoFromRest) {
+        Avtomobil newOrLoaded;
+        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avtoFromRest.getId()).optional();
 
         if(ra.isEmpty()) {
-             a = dataManager.create(Avtomobil.class);
-            a.setZayavka(avto.getZayavka());
-            a.setMarka(avto.getMarka());
-            a.setNomer(avto.getNomer());
-            a.setNomerAG(avto.getNomerAG());
+             newOrLoaded = dataManager.create(Avtomobil.class);
+            newOrLoaded.setZayavka(avtoFromRest.getZayavka());
+            newOrLoaded.setMarka(avtoFromRest.getMarka());
+            newOrLoaded.setNomer(avtoFromRest.getNomer());
+            newOrLoaded.setNomerAG(avtoFromRest.getNomerAG());
+            newOrLoaded.setTenantAttribute(avtoFromRest.getTenantAttribute());
 
         }else {
-            a = ra.get();
+            newOrLoaded = ra.get();
         }
-        a.setComment(avto.getComment());
-        a.setDate(avto.getDate());
-        a.setUsername(a.getUsername());
-        a.setStatus("VYPOLNENA");
+        newOrLoaded.setComment(avtoFromRest.getComment());
+        newOrLoaded.setDate(avtoFromRest.getDate());
+        newOrLoaded.setUsername(newOrLoaded.getUsername());
+        newOrLoaded.setStatus("VYPOLNENA");
         List<Foto> fs = new ArrayList<Foto>();
-        for (Foto f : avto.getFotos()){
+        for (Foto f : avtoFromRest.getFotos()){
             Foto nf = dataManager.create(Foto.class);
-            nf.setAvtomobil(a);
+            nf.setAvtomobil(newOrLoaded);
             nf.setFile(f.getFile());
+            nf.setTenantAttribute(newOrLoaded.getTenantAttribute());
 
             fs.add(nf);
 
         }
         List<OborudovanieFoto> ofs = new ArrayList<OborudovanieFoto>();
-        for (Foto f : avto.getFotos()){
+        for (OborudovanieFoto of : avtoFromRest.getOborudovanieFotos()){
             OborudovanieFoto nf = dataManager.create(OborudovanieFoto.class);
-            nf.setAvtomobil(a);
-            nf.setFile(f.getFile());
-
+            nf.setAvtomobil(newOrLoaded);
+            nf.setFile(of.getFile());
+            nf.setTenantAttribute(avtoFromRest.getTenantAttribute());
             ofs.add(nf);
 
         }
         List<Oborudovanie> os = new ArrayList<Oborudovanie>();
-        for (Oborudovanie o : avto.getBarcode()){
+        for (Oborudovanie o : avtoFromRest.getBarcode()){
             Oborudovanie of = dataManager.create(Oborudovanie.class);
-            of.setAvtomobil(a);
+            of.setAvtomobil(newOrLoaded);
             of.setCode(o.getCode());
+            of.setTenantAttribute(avtoFromRest.getTenantAttribute());
             os.add(of);
 
         }
-        a.setBarcode(os);
+        newOrLoaded.setBarcode(os);
 
         List<AvtoUsluga> us = new ArrayList<AvtoUsluga>();
-        for (AvtoUsluga u : avto.getPerformance_service()){
+        for (AvtoUsluga u : avtoFromRest.getPerformance_service()){
             AvtoUsluga of = dataManager.create(AvtoUsluga.class);
-            of.setAvtomobil(a);
+            of.setAvtomobil(newOrLoaded);
             of.setTitle(u.getTitle());
             of.setDop(u.getDop());
+            of.setTenantAttribute(avtoFromRest.getTenantAttribute());
             us.add(of);
-            //dataManager.save(nf);
+
         }
-        a.setPerformance_service(us);
+        newOrLoaded.setPerformance_service(us);
 
         SaveContext saveContext = new SaveContext();
         for (Foto entity : fs) {
@@ -312,27 +390,34 @@ public class FlutterServiceBean {
         for (AvtoUsluga entity : us) {
             saveContext.saving( entity);
         }
-        saveContext.saving(a);
+        saveContext.saving(newOrLoaded);
         EntitySet s = dataManager.save(saveContext);
-        Avtomobil r = s.get(a);
+        newOrLoaded = s.get(newOrLoaded);
 
 
+        if(newOrLoaded.getTenantAttribute().equals("avtokonnekt"))
+            return prepareAndSendToBipium(newOrLoaded);
+
+        return true;
+
+
+    }
+
+    private boolean prepareAndSendToBipium( Avtomobil savedWithAllData) {
         Avto av = new Avto();
-        av.setZayavka_id(r.getZayavka().getId().toString());
-        av.setMarka_avto(r.getMarka());
-        av.setNomer_avto(r.getNomer());
-        av.setNomerAG(r.getNomerAG());
-        av.setDate(r.getDate());
-        av.setComment(r.getComment());
+        av.setZayavka_id(savedWithAllData.getZayavka().getId().toString());
+        av.setMarka_avto(savedWithAllData.getMarka());
+        av.setNomer_avto(savedWithAllData.getNomer());
+        av.setNomerAG(savedWithAllData.getNomerAG());
+        av.setDate(savedWithAllData.getDate());
+        av.setComment(savedWithAllData.getComment());
         List<O> b = new ArrayList<O>();
-        for (Oborudovanie o : avto.getBarcode()){
-            O ob = new O();
-            ob.setCode(o.getCode());
-            b.add(ob);
+        for (Oborudovanie o : savedWithAllData.getBarcode()){
+            b.add(new O(o.getCode()));
         }
         av.setBarcode(b);
         List<U> usl = new ArrayList<U>();
-        for (AvtoUsluga o : avto.getPerformance_service()){
+        for (AvtoUsluga o : savedWithAllData.getPerformance_service()){
             U u = new U();
             u.setTitle(o.getTitle());
             u.setDop(o.getDop());
@@ -340,14 +425,14 @@ public class FlutterServiceBean {
         }
         av.setPerformance_service(usl);
         List<F> fo = new ArrayList<F>();
-        for (Foto o : avto.getFotos()){
+        for (Foto o : savedWithAllData.getFotos()){
             F u = new F();
             u.setFile(o.getFile().toString());
             fo.add(u);
         }
         av.setFotos(fo);
         List<OF> ofo = new ArrayList<OF>();
-        for (OborudovanieFoto o : avto.getOborudovanieFotos()){
+        for (OborudovanieFoto o : savedWithAllData.getOborudovanieFotos()){
             OF u = new OF();
             u.setFile(o.getFile().toString());
             ofo.add(u);
@@ -358,12 +443,10 @@ public class FlutterServiceBean {
         re.setReport(av);
         boolean sent =  sendToBpium("https://autoconnect.bpium.ru/api/webrequest/mobilapp?async=true", re);
         if(!sent){
-            a.setStatus("BIPIUM_ERROR");
-            dataManager.save(a);
+            savedWithAllData.setStatus("BIPIUM_ERROR");
+            dataManager.save(savedWithAllData);
         }
         return sent;
-
-
     }
 
     private static boolean sendToBpium(String url, Object re) {
@@ -577,6 +660,26 @@ class ZayavkaDTO{
     public void setStatus(String status) {
         this.status = status;
     }
+
+    static ZayavkaDTO getFrom(Zayavka z){
+        ZayavkaDTO r = new ZayavkaDTO();
+        r.setMessage(z.getMessage());
+        r.setService(z.getService());
+        r.setUsername(z.getUsername());
+        r.setClient(z.getClient());
+        r.setAdres(z.getAdres());
+        r.setComment_address(z.getComment_address());
+        r.setContact_name(z.getContact_name());
+        r.setContact_number(z.getContact_number());
+        r.setEnd_date_time(z.getEnd_date_time());
+        r.setId(z.getId().toString());
+        r.setLat(z.getLat());
+        r.setLng(z.getLng());
+        r.setNachalo(z.getNachalo());
+        r.setNomer(z.getNomer());
+        r.setStatus(z.getStatus());
+        return  r;
+    }
 }
 class Avto{
     private String id;
@@ -690,6 +793,9 @@ class Avto{
     }
 }
 class O{
+    O(String code){
+        this.code = code;
+    }
     private String code;
 
     public String getCode() {
@@ -709,6 +815,17 @@ class ChekReport{
 
     public C getChek() {
         return chek;
+    }
+}
+class PerReport{
+    private Per per;
+
+    public PerReport(Per per) {
+        this.per = per;
+    }
+
+    public Per getPer() {
+        return per;
     }
 }
 class C{
@@ -733,8 +850,62 @@ class C{
         return fotos;
     }
 }
+class Per{
+    Per(String username, String comment, List<PerF> fotos,List<O> oborud){
+        this.comment = comment;
+        this.username = username;
+        this.fotos = fotos;
+        this.oborud = oborud;
+    }
+    private String username;
+    private String comment;
+    private List<PerF> fotos;
+    private List<O> oborud;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public List<PerF> getFotos() {
+        return fotos;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setFotos(List<PerF> fotos) {
+        this.fotos = fotos;
+    }
+
+    public List<O> getOborud() {
+        return oborud;
+    }
+
+    public void setOborud(List<O> oborud) {
+        this.oborud = oborud;
+    }
+}
 class CF{
     CF(String file){
+        this.file = file;
+    }
+    private String file;
+
+    public String getFile() {
+        return file;
+    }
+}
+class PerF{
+    PerF(String file){
         this.file = file;
     }
     private String file;

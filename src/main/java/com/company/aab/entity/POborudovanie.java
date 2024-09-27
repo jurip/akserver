@@ -10,11 +10,11 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "OBORUDOVANIE", indexes = {
-        @Index(name = "IDX_OBORUDOVANIE_AVTOMOBIL", columnList = "AVTOMOBIL_ID")
+@Table(name = "POBORUDOVANIE", indexes = {
+        @Index(name = "IDX_POBORUDOVANIE_AVTOMOBIL", columnList = "PEREMESHENIE_ID")
 })
 @Entity
-public class Oborudovanie {
+public class POborudovanie {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id
@@ -24,9 +24,9 @@ public class Oborudovanie {
     private String code;
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
-    @JoinColumn(name = "AVTOMOBIL_ID")
+    @JoinColumn(name = "PEREMESHENIE_ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Avtomobil avtomobil;
+    private Peremeshenie peremeshenie;
 
     @Column(name = "TENANT_ATTRIBUTE")
     @TenantId
@@ -40,12 +40,13 @@ public class Oborudovanie {
         this.tenantAttribute = tenantAttribute;
     }
 
-    public Avtomobil getAvtomobil() {
-        return avtomobil;
+
+    public Peremeshenie getPeremeshenie() {
+        return peremeshenie;
     }
 
-    public void setAvtomobil(Avtomobil avtomobil) {
-        this.avtomobil = avtomobil;
+    public void setPeremeshenie(Peremeshenie peremeshenie) {
+        this.peremeshenie = peremeshenie;
     }
 
     public String getCode() {

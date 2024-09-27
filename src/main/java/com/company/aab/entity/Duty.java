@@ -1,5 +1,6 @@
 package com.company.aab.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -35,6 +36,18 @@ public class Duty {
 
     @Column(name = "USERNAME")
     private String username;
+
+    @Column(name = "TENANT_ATTRIBUTE")
+    @TenantId
+    private String tenantAttribute;
+
+    public String getTenantAttribute() {
+        return tenantAttribute;
+    }
+
+    public void setTenantAttribute(String tenantAttribute) {
+        this.tenantAttribute = tenantAttribute;
+    }
 
     public String getPrioritet() {
         return prioritet;

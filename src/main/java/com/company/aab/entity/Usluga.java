@@ -1,5 +1,6 @@
 package com.company.aab.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -28,6 +29,18 @@ public class Usluga {
 
     @Column(name = "PRIORITET", length = 1)
     private String prioritet;
+
+    @Column(name = "TENANT_ATTRIBUTE")
+    @TenantId
+    private String tenantAttribute;
+
+    public String getTenantAttribute() {
+        return tenantAttribute;
+    }
+
+    public void setTenantAttribute(String tenantAttribute) {
+        this.tenantAttribute = tenantAttribute;
+    }
 
     public String getPrioritet() {
         return prioritet;

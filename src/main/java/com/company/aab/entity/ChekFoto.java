@@ -2,6 +2,7 @@ package com.company.aab.entity;
 
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.FileRef;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -19,6 +20,18 @@ public class ChekFoto {
     @Column(name = "ID", nullable = false)
     @Id
     private UUID id;
+
+    @Column(name = "TENANT_ATTRIBUTE")
+    @TenantId
+    private String tenantAttribute;
+
+    public String getTenantAttribute() {
+        return tenantAttribute;
+    }
+
+    public void setTenantAttribute(String tenantAttribute) {
+        this.tenantAttribute = tenantAttribute;
+    }
 
     @Column(name = "FILE_", length = 1024)
     private FileRef file;

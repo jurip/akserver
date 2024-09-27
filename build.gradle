@@ -47,6 +47,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
     implementation 'com.google.firebase:firebase-admin:8.0.1'
 
+    implementation 'io.jmix.multitenancy:jmix-multitenancy-starter'
+    implementation 'io.jmix.multitenancy:jmix-multitenancy-flowui-starter'
+    implementation 'io.jmix.translations:jmix-translations-ru'
 }
 
 test {

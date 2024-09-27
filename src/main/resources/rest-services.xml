@@ -17,14 +17,24 @@
         <method name="getAllCheks">
             <param name="username"/>
         </method>
+        <method name="getAllPeremeshenies">
+            <param name="username"/>
+        </method>
         <method name="saveAvto">
             <param name="avto"/>
         </method>
+        <method name="saveAvtomobil">
+            <param name="avto"/>
+        </method>
+
         <method name="saveDuty">
             <param name="duty"/>
         </method>
         <method name="saveChek">
             <param name="chek"/>
+        </method>
+        <method name="savePeremeshenie">
+            <param name="peremeshenie"/>
         </method>
         <method name="saveZayavka">
             <param name="zayavka"/>

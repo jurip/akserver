@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "CHEK")
+@Table(name = "PEREMESHENIE")
 @Entity
-public class Chek {
+public class Peremeshenie {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id
@@ -32,8 +32,12 @@ public class Chek {
     }
 
     @Composition
-    @OneToMany(mappedBy = "chek")
-    private List<ChekFoto> fotos;
+    @OneToMany(mappedBy = "peremeshenie")
+    private List<PFoto> fotos;
+
+    @Composition
+    @OneToMany(mappedBy = "peremeshenie")
+    private List<POborudovanie> barcode;
 
     @Column(name = "USERNAME")
     private String username;
@@ -42,7 +46,7 @@ public class Chek {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @Column(name = "COMMENT_")
+    @Column(name = "COMMENT")
     private String comment;
 
     public String getComment() {
@@ -61,11 +65,11 @@ public class Chek {
         this.date = date;
     }
 
-    public List<ChekFoto> getFotos() {
+    public List<PFoto> getFotos() {
         return fotos;
     }
 
-    public void setFotos(List<ChekFoto> fotos) {
+    public void setFotos(List<PFoto> fotos) {
         this.fotos = fotos;
     }
 
@@ -83,5 +87,13 @@ public class Chek {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public List<POborudovanie> getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(List<POborudovanie> barcode) {
+        this.barcode = barcode;
     }
 }
