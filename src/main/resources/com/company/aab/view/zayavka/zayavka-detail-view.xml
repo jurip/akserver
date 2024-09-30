@@ -6,7 +6,12 @@
         <instance id="zayavkaDc"
                   class="com.company.aab.entity.Zayavka">
             <fetchPlan extends="_base">
-                <property name="avtomobili" fetchPlan="_base"/>
+                <property name="avtomobili" fetchPlan="_base">
+                    <property name="barcode" fetchPlan="_base"/>
+                    <property name="fotos" fetchPlan="_base"/>
+                    <property name="oborudovanieFotos" fetchPlan="_base"/>
+                    <property name="performance_service" fetchPlan="_base"/>
+                </property>
             </fetchPlan>
             <loader/>
             <collection id="avtomobiliDc" property="avtomobili"/>
@@ -21,35 +26,44 @@
     </actions>
     <layout>
         <formLayout id="form" dataContainer="zayavkaDc">
-            <textField id="nomerField" property="nomer" required="true"/>
+            <textField id="usernameField" property="username"/>
+            <textField id="nomerField" property="nomer"/>
             <dateTimePicker id="nachaloField" property="nachalo"/>
+            <textField id="messageField" property="message"/>
+            <textField id="clientField" property="client"/>
             <textField id="adresField" property="adres"/>
+
+            <textField id="latField" property="lat"/>
+            <textField id="lngField" property="lng"/>
             <textField id="serviceField" property="service"/>
             <textField id="comment_addressField" property="comment_address"/>
-            <textField id="clientField" property="client"/>
+            <textField id="statusField" property="status"/>
+
             <textField id="contact_nameField" property="contact_name"/>
             <textField id="contact_numberField" property="contact_number"/>
             <textField id="manager_nameField" property="manager_name"/>
             <textField id="manager_numberField" property="manager_number"/>
-            <textField id="usernameField" property="username"/>
+            <dateTimePicker id="end_date_timeField" property="end_date_time"/>
+
+
+
+
+
         </formLayout>
-        <dataGrid id="avtomobiliDataGrid" dataContainer="avtomobiliDc" width="100%" minHeight="20em"
-                  editorBuffered="false" detailsVisibleOnClick="true">
-            <actions>
-                <action id="edit" type="list_edit">
-                    <properties>
-                        <property name="openMode" value="DIALOG"/>
-                    </properties>
-                </action>
-            </actions>
+        <dataGrid id="avtomobiliDataGrid" dataContainer="avtomobiliDc" width="100%" minHeight="20em">
             <columns>
-                <column property="nomer" editable="true"/>
-                <column property="marka" editable="true"/>
+                <column property="date"/>
+                <column property="status"/>
+                <column property="comment"/>
+                <column property="nomer"/>
+                <column property="marka"/>
+                <column property="nomerAG"/>
+
+                <column property="username"/>
             </columns>
         </dataGrid>
-        <button id="button" text="Добавить автомобиль"/>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction" text="Сохранить"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

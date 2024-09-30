@@ -20,7 +20,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 @Push
-@Theme(value = "aab")
+@Theme(value = "а")
 @PWA(name = "Aab", shortName = "Aab")
 @SpringBootApplication
 public class AabApplication implements AppShellConfigurator {
