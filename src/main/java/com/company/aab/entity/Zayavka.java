@@ -15,6 +15,7 @@ import java.util.UUID;
 @Entity
 public class Zayavka {
     public static final String VYPOLNENA = "VYPOLNENA";
+    public static final String OTMENA = "OTMENA";
 
     public static final String NOVAYA = "NOVAYA";
 

@@ -1,0 +1,136 @@
+databaseUniqueConstraintViolation.IDX_USER__ON_USERNAME=A user with the same username already exists
+
+com.company.aab.entity/AvtoUsluga=Avto usluga
+com.company.aab.entity/AvtoUsluga.avtomobil=Avtomobil
+com.company.aab.entity/AvtoUsluga.id=Id
+com.company.aab.entity/AvtoUsluga.title=Title
+com.company.aab.entity/AvtoUsluga.usluga=Usluga
+com.company.aab.entity/Avtomobil=Автомобиль
+com.company.aab.entity/Avtomobil.barcode=Barcode
+com.company.aab.entity/Avtomobil.date=Date
+com.company.aab.entity/Avtomobil.fotos=Фото
+com.company.aab.entity/Avtomobil.id=айди
+com.company.aab.entity/Avtomobil.marka=марка
+com.company.aab.entity/Avtomobil.nomer=номер
+com.company.aab.entity/Avtomobil.status=статус
+com.company.aab.entity/Avtomobil.username=Username
+com.company.aab.entity/Avtomobil.performance_service=услуги
+com.company.aab.entity/Avtomobil.version=Version
+com.company.aab.entity/Avtomobil.zayavka=заявка
+com.company.aab.entity/Avtomobil.zayavka_id=Zayavka id
+com.company.aab.entity/Chek=Chek
+com.company.aab.entity/Chek.comment=Comment
+com.company.aab.entity/Chek.date=Date
+com.company.aab.entity/Chek.fotos=Fotos
+com.company.aab.entity/Chek.id=Id
+com.company.aab.entity/Chek.username=Username
+com.company.aab.entity/ChekFoto=Chek foto
+com.company.aab.entity/ChekFoto.chek=Chek
+com.company.aab.entity/ChekFoto.file=File
+com.company.aab.entity/ChekFoto.id=Id
+com.company.aab.entity/Duty=Duty
+com.company.aab.entity/Duty.date_from=Date from
+com.company.aab.entity/Duty.date_until=Date until
+com.company.aab.entity/Duty.fio=Fio
+com.company.aab.entity/Duty.id=Id
+com.company.aab.entity/Duty.prioritet=Prioritet
+com.company.aab.entity/Duty.status=Status
+com.company.aab.entity/Duty.username=Username
+com.company.aab.entity/Foto=фото
+com.company.aab.entity/Foto.avtomobil=автомобиль
+com.company.aab.entity/Foto.file=файл
+com.company.aab.entity/Foto.fotoFile=Foto file
+com.company.aab.entity/Foto.id=Id
+com.company.aab.entity/Foto.localFile=Local file
+com.company.aab.entity/Foto.version=Version
+com.company.aab.entity/Oborudovanie=Oborudovanie
+com.company.aab.entity/Oborudovanie.avtomobil=Avtomobil
+com.company.aab.entity/Oborudovanie.code=Barcode
+com.company.aab.entity/Oborudovanie.id=Id
+com.company.aab.entity/OborudovanieFoto=Oborudovanie foto
+com.company.aab.entity/OborudovanieFoto.id=Id
+com.company.aab.entity/User=User
+com.company.aab.entity/User.id=ID
+com.company.aab.entity/User.username=Username
+com.company.aab.entity/User.firstName=First name
+com.company.aab.entity/User.lastName=Last name
+com.company.aab.entity/User.password=Password
+com.company.aab.entity/User.telegramId=Telegram id
+com.company.aab.entity/User.email=Email
+com.company.aab.entity/User.timeZoneId=Time zone
+com.company.aab.entity/User.active=Active
+com.company.aab.entity/User.version=Version
+com.company.aab.entity/Usluga=Usluga
+com.company.aab.entity/Usluga.code=Code
+com.company.aab.entity/Usluga.id=Id
+com.company.aab.entity/Usluga.prioritet=Prioritet
+com.company.aab.entity/Usluga.title=Name
+com.company.aab.entity/Usluga.type=Type
+com.company.aab.entity/Zayavka=Zayavka
+com.company.aab.entity/Zayavka.adres=адрес
+com.company.aab.entity/Zayavka.avtomobili=автомобили
+com.company.aab.entity/Zayavka.client=Client
+com.company.aab.entity/Zayavka.comment_address=Comment address
+com.company.aab.entity/Zayavka.contact_name=Contact name
+com.company.aab.entity/Zayavka.contact_number=Contact number
+com.company.aab.entity/Zayavka.end_date_time=End date time
+com.company.aab.entity/Zayavka.id=Id
+com.company.aab.entity/Zayavka.klient=клиент
+com.company.aab.entity/Zayavka.lat=Lat
+com.company.aab.entity/Zayavka.lng=Lng
+com.company.aab.entity/Zayavka.manager_name=Manager name
+com.company.aab.entity/Zayavka.manager_number=Manager number
+com.company.aab.entity/Zayavka.message=Message
+com.company.aab.entity/Zayavka.nachalo=начало
+com.company.aab.entity/Zayavka.nomer=номер
+com.company.aab.entity/Zayavka.service=Service
+com.company.aab.entity/Zayavka.status=статус
+com.company.aab.entity/Zayavka.username=Username
+com.company.aab.entity/Zayavka.version=Version
+
+com.company.aab.view.main/MainView.title=Автоконнект
+com.company.aab.view.main/applicationTitle.text=Автоконнект
+com.company.aab.view.main/navigation.ariaLabel=Views
+com.company.aab.view.main/drawerToggle.ariaLabel=меню
+
+com.company.aab.view.avtomobil/avtomobilDetailView.title=Отчет по авто
+
+com.company.aab.view.avtousluga/avtoUslugaDetailView.title=Avto usluga
+com.company.aab.view.avtousluga/avtoUslugaListView.title=Avto uslugas
+
+com.company.aab.view.blank/blankView.title=Blank view
+
+com.company.aab.view.chek/chekDetailView.title=Чек
+com.company.aab.view.chek/chekListView.title=Чеки
+
+com.company.aab.view.login/LoginView.title=Логин
+com.company.aab.view.login/loginForm.headerTitle=Автоконнект
+com.company.aab.view.login/loginForm.username=логин
+com.company.aab.view.login/loginForm.password=пароль
+com.company.aab.view.login/loginForm.submit=Войти
+com.company.aab.view.login/loginForm.forgotPassword=Забыл пароль
+com.company.aab.view.login/loginForm.errorTitle=Login failed
+com.company.aab.view.login/loginForm.badCredentials=Check that you have entered the correct username and password and try again
+com.company.aab.view.login/loginForm.errorUsername=Username is required
+com.company.aab.view.login/loginForm.errorPassword=Password is required
+com.company.aab.view.login/loginForm.rememberMe=запомнить
+
+com.company.aab.view.user/UserListView.title=Users
+
+com.company.aab.view.oborudovanie/oborudovanieDetailView.title=Oborudovanie
+com.company.aab.view.oborudovanie/oborudovanieListView.title=Oborudovanies
+
+com.company.aab.view.user/UserDetailView.title=User
+com.company.aab.view.user/confirmPassword=Confirm password
+com.company.aab.view.user/passwordsDoNotMatch=Passwords do not match
+com.company.aab.view.user/additionalMenu=Additional
+
+com.company.aab.view.usluga/uslugaDetailView.title=Услуги
+com.company.aab.view.usluga/uslugaListView.title=Услуги
+
+com.company.aab.view.uslugavariant/uslugaVariantListView.title=Услуга
+
+com.company.aab.view.zayavka/zayavkaDetailView.title=Заявка
+com.company.aab.view.zayavka/zayavkaListView.title=Заявки
+
+com.company.aab/menu.application.title=приложение

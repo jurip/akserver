@@ -6,16 +6,19 @@
         <instance id="avtomobilDc"
                   class="com.company.aab.entity.Avtomobil">
             <fetchPlan extends="_base">
-                <property name="fotos" fetchPlan="_base"/>
-                <property name="performance_service" fetchPlan="_base"/>
                 <property name="barcode" fetchPlan="_base"/>
+                <property name="fotos" fetchPlan="_base"/>
+                <property name="oborudovanieFotos" fetchPlan="_base"/>
+                <property name="performance_service" fetchPlan="_base">
+                    <property name="usluga" fetchPlan="_base"/>
+                </property>
             </fetchPlan>
             <loader/>
-            <collection id="fotosDc" property="fotos"/>
-            <collection id="uslugiDc" property="performance_service"/>
             <collection id="barcodeDc" property="barcode"/>
+            <collection id="fotosDc" property="fotos"/>
+            <collection id="oborudovanieFotosDc" property="oborudovanieFotos"/>
+            <collection id="performance_serviceDc" property="performance_service"/>
         </instance>
-        <instance id="newFotoDc" class="com.company.aab.entity.Foto"/>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -26,55 +29,43 @@
     </actions>
     <layout>
         <formLayout id="form" dataContainer="avtomobilDc">
+            <dateTimePicker id="dateField" property="date"/>
+            <textField id="statusField" property="status"/>
+            <textField id="commentField" property="comment"/>
             <textField id="nomerField" property="nomer"/>
             <textField id="markaField" property="marka"/>
-            <textField id="statusField" property="status"/>
+            <textField id="nomerAGField" property="nomerAG"/>
+            <textField id="tenantAttributeField" property="tenantAttribute"/>
+            <textField id="usernameField" property="username"/>
         </formLayout>
-        <formLayout id="newF" dataContainer="newFotoDc">
-            <fileStorageUploadField id="fileU" property="file" maxFileSize="6000000"/>
-        </formLayout>
-        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="10em">
-            <columns resizable="true">
-                <column key="imageCol" sortable="false" flexGrow="0" resizable="false"/>
-                <column key="deleteIm" sortable="false" flexGrow="0" resizable="false"/>
-            </columns>
-            <actions>
-                <action id="remove" type="list_remove"/>
-            </actions>
-        </dataGrid>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button action="uslugiDataGrid.create" text="dobawit uslugu"/>
-            <button action="uslugiDataGrid.edit"/>
-            <button action="uslugiDataGrid.remove"/>
-        </hbox>
-        <dataGrid id="uslugiDataGrid" dataContainer="uslugiDc" width="100%" height="100%">
-            <actions>
-                <action id="create" type="list_create"/>
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
-            </actions>
-            <columns>
-                <column property="usluga.title" sortable="false" flexGrow="0" resizable="false"/>
-            </columns>
-        </dataGrid>
-        <hbox id="ubuttonsPanel" classNames="buttons-panel">
-            <button action="barcodeDataGrid.create"/>
-            <button action="barcodeDataGrid.edit"/>
-            <button action="barcodeDataGrid.remove"/>
-        </hbox>
-        <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" height="100%">
-            <actions>
-                <action id="create" type="list_create"/>
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
-            </actions>
+        <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
             <columns>
                 <column property="code"/>
+                <column property="tenantAttribute"/>
+            </columns>
+        </dataGrid>
+        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="file"/>
+                <column property="tenantAttribute"/>
+            </columns>
+        </dataGrid>
+        <dataGrid id="oborudovanieFotosDataGrid" dataContainer="oborudovanieFotosDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="file"/>
+                <column property="tenantAttribute"/>
+            </columns>
+        </dataGrid>
+        <dataGrid id="performance_serviceDataGrid" dataContainer="performance_serviceDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="title"/>
+                <column property="tenantAttribute"/>
+                <column property="dop"/>
+                <column property="usluga"/>
             </columns>
         </dataGrid>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction" text="Сохранить"/>
-            <button id="vypolnena" text="Выполнить" action="saveAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

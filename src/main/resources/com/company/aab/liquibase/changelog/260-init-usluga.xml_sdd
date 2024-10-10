@@ -7,7 +7,7 @@
 
     <!-- DO NOT REMOVE. This changelog is required for user management. -->
     <changeSet id="37" author="aab" context="!cuba">
-        <sqlFile dbms="hsqldb" path="com/company/aab/liquibase/changelog/raboty9.sql" />
+        <sqlFile dbms="hsqldb" path="com/company/aab/liquibase/changelog/raboty10.sql" />
     </changeSet>
 
 </databaseChangeLog>

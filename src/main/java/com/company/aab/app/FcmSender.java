@@ -35,40 +35,80 @@ public class FcmSender {
     DateFormat df = new SimpleDateFormat(pattern);
 
     Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
+    Message message;
+    if(zayavka.getStatus()==null)
+      zayavka.setStatus("NOVAYA");
+
+ if("NOVAYA".equals(zayavka.getStatus())) {
+   message =
+           Message.builder()
+
+                   .putData("id", zayavka.getId().toString())
+                   .putData("message", zayavka.getMessage() != null ? zayavka.getMessage() : "")
+                   .putData("adres", zayavka.getAdres() != null ? zayavka.getAdres() : "")
+                   .putData("nomer", zayavka.getNomer() != null ? zayavka.getNomer() : "")
+
+                   .putData("nachalo", df.format(zayavka.getNachalo() != null ? zayavka.getNachalo() : new Date()))
+                   .putData("end_date_time", df.format(zayavka.getEnd_date_time() != null ? zayavka.getEnd_date_time() : new Date()))
+                   .putData("comment_address", zayavka.getComment_address() != null ? zayavka.getComment_address() : "")
+                   .putData("service", zayavka.getService() != null ? zayavka.getService() : "")
+                   .putData("client", zayavka.getClient() != null ? zayavka.getClient() : "")
+                   .putData("contact_name", zayavka.getContact_name() != null ? zayavka.getContact_name() : "")
+                   .putData("contact_number", zayavka.getContact_number() != null ? zayavka.getContact_number() : "")
+                   .putData("manager_name", zayavka.getManager_name() != null ? zayavka.getManager_name() : "")
+                   .putData("manager_number", zayavka.getManager_number() != null ? zayavka.getManager_number() : "")
+                   .putData("lat", zayavka.getLat() != null ? zayavka.getLat() : "")
+                   .putData("lng", zayavka.getLng() != null ? zayavka.getLng() : "")
+                   .putData("avtomobili", g.toJson(zayavka.getAvtomobili() != null
+                           ? zayavka.getAvtomobili() : List.of()))
+                   .putData("status", zayavka.getStatus() != null ? zayavka.getStatus() : "NOVAYA")
 
 
-    Message message =
-        Message.builder()
+                   .setNotification(
+                           Notification.builder()
+                                   .setTitle("Новая заявка")
+                                   .setBody("Заявка на адрес " + zayavka.getAdres())
+                                   .build())
+                   .setToken(token)
+                   .build();
+ }else{
+   message =
+           Message.builder()
 
-            .putData("id", zayavka.getId().toString())
-            .putData("message", zayavka.getMessage()!=null?zayavka.getMessage():"")
-                .putData("adres", zayavka.getAdres()!=null?zayavka.getAdres():"")
-                .putData("nomer", zayavka.getNomer()!=null?zayavka.getNomer():"")
+                   .putData("id", zayavka.getId().toString())
+                   .putData("message", zayavka.getMessage() != null ? zayavka.getMessage() : "")
+                   .putData("adres", zayavka.getAdres() != null ? zayavka.getAdres() : "")
+                   .putData("nomer", zayavka.getNomer() != null ? zayavka.getNomer() : "")
 
-                .putData("nachalo", df.format(zayavka.getNachalo()!=null? zayavka.getNachalo():new Date()))
-                .putData("end_date_time", df.format(zayavka.getEnd_date_time()!=null?zayavka.getEnd_date_time():new Date()))
-                .putData("comment_address",zayavka.getComment_address()!=null? zayavka.getComment_address():"")
-                .putData("service", zayavka.getService()!=null?zayavka.getService():"")
-                .putData("client", zayavka.getClient()!=null?zayavka.getClient():"")
-                .putData("contact_name", zayavka.getContact_name()!=null?zayavka.getContact_name():"")
-                .putData("contact_number", zayavka.getContact_number()!=null?zayavka.getContact_number():"")
-                .putData("manager_name", zayavka.getManager_name()!=null?zayavka.getManager_name():"")
-                .putData("manager_number", zayavka.getManager_number()!=null?zayavka.getManager_number():"")
-                .putData("lat", zayavka.getLat()!=null?zayavka.getLat():"")
-                .putData("lng", zayavka.getLng()!=null?zayavka.getLng():"")
-                .putData("avtomobili", g.toJson( zayavka.getAvtomobili()!=null
-                        ?zayavka.getAvtomobili():List.of()))
+                   .putData("nachalo", df.format(zayavka.getNachalo() != null ? zayavka.getNachalo() : new Date()))
+                   .putData("end_date_time", df.format(zayavka.getEnd_date_time() != null ? zayavka.getEnd_date_time() : new Date()))
+                   .putData("comment_address", zayavka.getComment_address() != null ? zayavka.getComment_address() : "")
+                   .putData("service", zayavka.getService() != null ? zayavka.getService() : "")
+                   .putData("client", zayavka.getClient() != null ? zayavka.getClient() : "")
+                   .putData("contact_name", zayavka.getContact_name() != null ? zayavka.getContact_name() : "")
+                   .putData("contact_number", zayavka.getContact_number() != null ? zayavka.getContact_number() : "")
+                   .putData("manager_name", zayavka.getManager_name() != null ? zayavka.getManager_name() : "")
+                   .putData("manager_number", zayavka.getManager_number() != null ? zayavka.getManager_number() : "")
+                   .putData("lat", zayavka.getLat() != null ? zayavka.getLat() : "")
+                   .putData("lng", zayavka.getLng() != null ? zayavka.getLng() : "")
+                   .putData("avtomobili", g.toJson(zayavka.getAvtomobili() != null
+                           ? zayavka.getAvtomobili() : List.of()))
+                   .putData("status", zayavka.getStatus())
+
+
+                   .setNotification(
+                           Notification.builder()
+                                   .setTitle("Изменение заявки")
+                                   .setBody(  zayavka.getNomer())
+                                   .build())
+                   .setToken(token)
+                   .build();
 
 
 
 
-            .setNotification(
-                Notification.builder()
-                    .setTitle("Новая заявка")
-                    .setBody("Заявка на адрес "+zayavka.getAdres())
-                    .build())
-            .setToken(token)
-            .build();
+
+ }
     try {
       String result = FirebaseMessaging.getInstance().send(message);
     }catch (Exception e){

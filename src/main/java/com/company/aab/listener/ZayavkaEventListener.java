@@ -35,7 +35,10 @@ public class ZayavkaEventListener {
 
     @EventListener
     public void onZayavkaSaving(final EntitySavingEvent<Zayavka> event) {
+
         Zayavka z =  event.getEntity();
+        if("avtokonnekt".equals(z.getTenantAttribute()))
+            return;
         if (z.getUsername() == null) {
             SessionData s = sessionDataProvider.stream().iterator().next();
             Object n = s.getAttribute("username");
