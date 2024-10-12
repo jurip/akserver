@@ -261,7 +261,7 @@ public class FlutterServiceBean {
         Chek re = d.get(c);
         if(AVTOKONNEKT.equals(c.getTenantAttribute())) {
             ChekReport result = getChekReport(re);
-            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check", result);
+            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/check?async=true", result);
             if (!sent) {
                 c.setComment("Ошибка бипиума, не отправлено");
                 dataManager.save(c);
@@ -325,7 +325,7 @@ public class FlutterServiceBean {
                 pob.add(new O(f.getCode()));
             }
             PerReport result = new PerReport(new Per(re.getUsername().split("\\|")[1], re.getComment(), fos, pob));
-            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/peremeshenie", result);
+            boolean sent = sendToBpium("https://autoconnect.bpium.ru/api/webrequest/peremeshenie?async=true", result);
             if (!sent) {
                 c.setComment("Ошибка бипиума, не отправлено");
                 dataManager.save(c);
