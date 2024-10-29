@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="aab">
+        <createTable tableName="AVTOFOTO">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_AVTOFOTO"/>
+            </column>
+            <column name="FILE_" type="VARCHAR(1024)"/>
+            <column name="TENANT_ATTRIBUTE" type="VARCHAR(255)"/>
+            <column name="AVTOMOBIL_ID" type="UUID"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="aab">
+        <createIndex indexName="IDX_AVTOFOTO_AVTOMOBIL" tableName="AVTOFOTO">
+            <column name="AVTOMOBIL_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="AVTOMOBIL_ID" baseTableName="AVTOFOTO"
+                                 constraintName="FK_AVTOFOTO_ON_AVTOMOBIL" referencedColumnNames="ID"
+                                 referencedTableName="AVTOMOBIL"/>
+    </changeSet>
+</databaseChangeLog>

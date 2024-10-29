@@ -175,9 +175,10 @@ public class FlutterServiceBean {
         }
     }
 
-    public List<Usluga> getAllUslugas(String username) {
+    public List<Usluga> getAllUslugas(String company) {
 
-        List<Usluga> l = dataManager.load(Usluga.class).query("select c from Usluga c order by c.prioritet")
+        List<Usluga> l = dataManager.load(Usluga.class).query("select c from Usluga c where c.tenantAttribute = :company order by c.prioritet ")
+                .parameter("company", company)
                 .list();
         return l;
     }
@@ -358,6 +359,16 @@ public class FlutterServiceBean {
         newOrLoaded.setComment(avtoFromRest.getComment());
         newOrLoaded.setDate(avtoFromRest.getDate());
         newOrLoaded.setStatus("VYPOLNENA");
+        List<AvtoFoto> afs = new ArrayList<AvtoFoto>();
+        for (AvtoFoto f : avtoFromRest.getAvtoFotos()){
+            AvtoFoto nf = dataManager.create(AvtoFoto.class);
+            nf.setAvtomobil(newOrLoaded);
+            nf.setFile(f.getFile());
+            nf.setTenantAttribute(newOrLoaded.getTenantAttribute());
+
+            afs.add(nf);
+
+        }
         List<Foto> fs = new ArrayList<Foto>();
         for (Foto f : avtoFromRest.getFotos()){
             Foto nf = dataManager.create(Foto.class);
@@ -393,7 +404,8 @@ public class FlutterServiceBean {
             AvtoUsluga of = dataManager.create(AvtoUsluga.class);
             of.setAvtomobil(newOrLoaded);
             of.setTitle(u.getTitle());
-            of.setDop(u.getDop());
+            of.setKolichestvo(u.getKolichestvo());
+            of.setSverh(u.getSverh());
             of.setTenantAttribute(avtoFromRest.getTenantAttribute());
             us.add(of);
 
@@ -401,6 +413,9 @@ public class FlutterServiceBean {
         newOrLoaded.setPerformance_service(us);
 
         SaveContext saveContext = new SaveContext();
+        for (AvtoFoto entity : afs) {
+            saveContext.saving( entity);
+        }
         for (Foto entity : fs) {
             saveContext.saving( entity);
         }
@@ -443,7 +458,8 @@ public class FlutterServiceBean {
         for (AvtoUsluga o : savedWithAllData.getPerformance_service()){
             U u = new U();
             u.setTitle(o.getTitle());
-            u.setDop(o.getDop());
+            u.setKolichestvo(o.getKolichestvo());
+            u.setSverh(o.getSverh());
             usl.add(u);
         }
         av.setPerformance_service(usl);
@@ -735,6 +751,7 @@ class Avto{
     private List<O> barcode;
     private List<U> performance_service;
     private List<F> fotos;
+    private List<F> avtofotos;
     private List<OF> oborudovanieFotos;
     private String status;
 
@@ -950,14 +967,25 @@ class PerF{
 }
 class U{
    private String title;
-   private String dop;
 
-    public String getDop() {
-        return dop;
+   private int kolichestvo;
+
+   private int sverh;
+
+    public int getKolichestvo() {
+        return kolichestvo;
     }
 
-    public void setDop(String dop) {
-        this.dop = dop;
+    public void setKolichestvo(int kolichestvo) {
+        this.kolichestvo = kolichestvo;
+    }
+
+    public int getSverh() {
+        return sverh;
+    }
+
+    public void setSverh(int sverh) {
+        this.sverh = sverh;
     }
 
     public String getTitle() {

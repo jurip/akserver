@@ -47,6 +47,10 @@ public class Avtomobil {
 
     @Composition
     @OneToMany(mappedBy = "avtomobil")
+    private List<AvtoFoto> avtoFotos;
+
+    @Composition
+    @OneToMany(mappedBy = "avtomobil")
     private List<OborudovanieFoto> oborudovanieFotos;
 
     @Composition
@@ -195,5 +199,13 @@ public class Avtomobil {
 
     public void setOborudovanieFotos(List<OborudovanieFoto> oborudovanieFotos) {
         this.oborudovanieFotos = oborudovanieFotos;
+    }
+
+    public List<AvtoFoto> getAvtoFotos() {
+        return avtoFotos;
+    }
+
+    public void setAvtoFotos(List<AvtoFoto> avtoFotos) {
+        this.avtoFotos = avtoFotos;
     }
 }

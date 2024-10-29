@@ -9,7 +9,7 @@
         </method>
 
         <method name="getAllUslugas">
-            <param name="username"/>
+            <param name="company"/>
         </method>
         <method name="loadDuties">
             <param name="username"/>

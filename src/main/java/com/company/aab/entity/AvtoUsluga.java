@@ -45,8 +45,15 @@ public class AvtoUsluga {
     @InstanceName
     @Column(name = "TITLE")
     private String title;
-    @Column(name="DOP")
-    private String dop;
+
+    @Column(name = "KOLICHESTVO")
+    private Integer kolichestvo;
+
+
+    @Column(name = "SVERH")
+    private Integer sverh;
+
+
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
     @JoinColumn(name = "AVTOMOBIL_ID", nullable = false)
@@ -82,11 +89,19 @@ public class AvtoUsluga {
         this.id = id;
     }
 
-    public String getDop() {
-        return dop;
+    public Integer getKolichestvo() {
+        return kolichestvo;
     }
 
-    public void setDop(String dop) {
-        this.dop = dop;
+    public void setKolichestvo(Integer kolichestvo) {
+        this.kolichestvo = kolichestvo;
+    }
+
+    public Integer getSverh() {
+        return sverh;
+    }
+
+    public void setSverh(Integer sverh) {
+        this.sverh = sverh;
     }
 }
