@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="akserver">
+        <createIndex indexName="IDX_SOISPOLNITEL_AVTOMOBIL" tableName="SOISPOLNITEL">
+            <column name="AVTOMOBIL_ID"/>
+        </createIndex>
+          <createIndex indexName="IDX_SOISPOLNITEL_USER" tableName="SOISPOLNITEL">
+                    <column name="USER_ID"/>
+                </createIndex>
+    </changeSet>
+     <changeSet id="7" author="aab">
+
+
+
+            <addForeignKeyConstraint baseColumnNames="AVTOMOBIL_ID" baseTableName="SOISPOLNITEL"
+                                     constraintName="FK_SOISPOLNITEL_ON_AVTOMOBIL" referencedColumnNames="ID"
+                                     referencedTableName="AVTOMOBIL"/>
+        </changeSet>
+</databaseChangeLog>

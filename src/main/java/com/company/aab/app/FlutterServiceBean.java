@@ -24,6 +24,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @Service("flutterService")
 public class FlutterServiceBean {
     public static final String AVTOKONNEKT = "avtokonnekt";
+    public static final String INFOGRAF = "infograf";
     private final DataManager dataManager;
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -38,12 +39,32 @@ public class FlutterServiceBean {
 
     private final EntityImportExport entityImportExport;
 
+    public String createUser(String username,String firstName, String lastName, String password){
+
+        User u = dataManager.create(User.class);
+        u.setUsername(INFOGRAF+"|"+username);
+        u.setFirstName(firstName);
+        u.setLastName(lastName);
+        u.setPassword(passwordEncoder.encode(password) );
+        u.setTenant(INFOGRAF);
+        u.setActive(true);
+        dataManager.save(u);
+        return u.getUsername();
+    }
+    public String changePassword(String username, String password){
+        User u = dataManager.load(User.class).query("select u from User u where u.username = :username")
+                .parameter("username", username).one();
+        u.setPassword(passwordEncoder.encode(password));
+        dataManager.save(u);
+        return "ok";
+    }
+
     public String login(String username, String password){
         UserDetails userDetails;
         try{
          userDetails= userRepository.loadUserByUsername(username);
         }catch(Exception e){
-            return "no"; 
+            return "no";
         }
 
             if(passwordEncoder.matches(password, userDetails.getPassword()))
@@ -59,35 +80,37 @@ public class FlutterServiceBean {
         return "ok";
     }
     public Zayavka sendZayavkaUpdate(Zayavka zayavka){
+        Zayavka z = null;
         if(zayavka.getId()!=null){
-            Zayavka z = dataManager.load(Zayavka.class).id(zayavka.getId()).one();
+            z = dataManager.load(Zayavka.class).id(zayavka.getId()).one();
             if(zayavka.getStatus()!=null) z.setStatus(zayavka.getStatus());
-            if(zayavka.getMessage()!=null) z.setMessage(zayavka.getMessage());
+           /* if(zayavka.getMessage()!=null) z.setMessage(zayavka.getMessage());
             if(zayavka.getService()!=null) z.setService(zayavka.getService());
             if(zayavka.getManager_number()!=null) z.setManager_number(zayavka.getManager_number());
             if(zayavka.getManager_name()!=null)z.setManager_name(zayavka.getManager_name());
             if(zayavka.getAdres()!=null)z.setAdres(zayavka.getAdres());
             if(zayavka.getComment_address()!=null)z.setComment_address(zayavka.getComment_address());
             if(zayavka.getNachalo()!=null)z.setNachalo(zayavka.getNachalo());
-            if(zayavka.getAdres()!=null)z.setAdres(zayavka.getAdres());
+            if(zayavka.getAdres()!=null)z.setAdres(zayavka.getAdres());*/
 
 
-            Zayavka result = dataManager.save(z);
+            z = dataManager.save(z);
 
-            String st = result.getTenantAttribute();
+            String st = z.getTenantAttribute();
             if(Objects.equals(st, AVTOKONNEKT)){
-                RZ v =new RZ(new ZayavkaUpdate(result.getId().toString(), new Date(), result.getStatus()));
+                RZ v =new RZ(new ZayavkaUpdate(z.getId().toString(), new Date(), z.getStatus()));
 
                 sendToBpium("https://autoconnect.bpium.ru/api/webrequest/finish_request", v);
+            } else if(Objects.equals(st, INFOGRAF)){
+                RZ v =new RZ(new ZayavkaUpdate(z.getId().toString(), new Date(), z.getStatus()));
+
+               // sendToBpium("https://autoconnect.bpium.ru/api/webrequest/finish_request", v);
             }
 
-            return result;
+
         }
 
-        Zayavka r  = dataManager.save(zayavka);
-
-
-        return r;
+        return z;
     }
     //from bipium
     public Zayavka updateZayavka(ZayavkaDTO zayavka) throws Exception {
@@ -108,6 +131,8 @@ public class FlutterServiceBean {
 
     }
 //avtokonnekt from bipium
+
+
     public Zayavka saveZayavka(ZayavkaDTO zayavka) throws Exception {
 
         String user = AVTOKONNEKT+"|"+zayavka.getUsername();
@@ -132,6 +157,7 @@ public class FlutterServiceBean {
 
         r.setStatus("NOVAYA");
         SaveContext saveContext = new SaveContext();
+        if (zayavka.getAvtomobili()!=null)
         for( Avto a: zayavka.getAvtomobili()){
 
 
@@ -160,6 +186,25 @@ public class FlutterServiceBean {
 
         return result.get(r);
     }
+    public Duty saveDuty(DutyDTO duty) throws Exception {
+
+        String user = AVTOKONNEKT+"|"+duty.getUsername();
+        Duty r = dataManager.create(Duty.class);
+        r.setTenantAttribute(AVTOKONNEKT);
+        r.setDate_from(duty.getDate_from());
+        r.setDate_until(duty.getDate_until());
+        r.setUsername(user);
+        r.setStatus(duty.getStatus());
+
+
+        SaveContext saveContext = new SaveContext();
+
+        saveContext.saving(r);
+        EntitySet result = dataManager.save(saveContext);
+
+
+        return result.get(r);
+    }
     private void sendZayavkaToUserApp(ZayavkaDTO zayavka) throws Exception {
         if(zayavka.getUsername()==null)
             return;
@@ -175,9 +220,17 @@ public class FlutterServiceBean {
         }
     }
 
+
     public List<Usluga> getAllUslugas(String company) {
 
         List<Usluga> l = dataManager.load(Usluga.class).query("select c from Usluga c where c.tenantAttribute = :company order by c.prioritet ")
+                .parameter("company", company)
+                .list();
+        return l;
+    }
+    public List<User> getAllUsers(String company) {
+
+        List<User> l = dataManager.load(User.class).query("select c from User c where c.tenant = :company order by c.lastName ")
                 .parameter("company", company)
                 .list();
         return l;
@@ -225,10 +278,6 @@ public class FlutterServiceBean {
 
     }
 
-    public Duty saveDuty(Duty duty){
-        Duty d = dataManager.save(duty);
-        return d;
-    }
     public List<Duty>  loadDuties(String username){
 
             return dataManager.load(Duty.class).query(
@@ -352,6 +401,10 @@ public class FlutterServiceBean {
             newOrLoaded.setNomerAG(avtoFromRest.getNomerAG());
             newOrLoaded.setUsername(avtoFromRest.getUsername());
             newOrLoaded.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            newOrLoaded.setLat(avtoFromRest.getLat());
+            newOrLoaded.setLng(avtoFromRest.getLng());
+            newOrLoaded.setNachaloRabot(avtoFromRest.getNachaloRabot());
+
 
         }else {
             newOrLoaded = ra.get();
@@ -388,6 +441,8 @@ public class FlutterServiceBean {
             ofs.add(nf);
 
         }
+        newOrLoaded.setOborudovanieFotos(ofs);
+
         List<Oborudovanie> os = new ArrayList<Oborudovanie>();
         for (Oborudovanie o : avtoFromRest.getBarcode()){
             Oborudovanie of = dataManager.create(Oborudovanie.class);
@@ -412,6 +467,20 @@ public class FlutterServiceBean {
         }
         newOrLoaded.setPerformance_service(us);
 
+
+        List<Soispolnitel> ss = new ArrayList<Soispolnitel>();
+        for (Soispolnitel si : avtoFromRest.getSoispolniteli()){
+            Soispolnitel sf = dataManager.create(Soispolnitel.class);
+            sf.setAvtomobil(newOrLoaded);
+            sf.setUsername(si.getUsername());
+
+            sf.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            ss.add(sf);
+
+        }
+        newOrLoaded.setSoispolniteli(ss);
+
+
         SaveContext saveContext = new SaveContext();
         for (AvtoFoto entity : afs) {
             saveContext.saving( entity);
@@ -426,6 +495,9 @@ public class FlutterServiceBean {
             saveContext.saving( entity);
         }
         for (AvtoUsluga entity : us) {
+            saveContext.saving( entity);
+        }
+        for (Soispolnitel entity : ss) {
             saveContext.saving( entity);
         }
         saveContext.saving(newOrLoaded);
@@ -448,7 +520,10 @@ public class FlutterServiceBean {
         av.setNomer_avto(savedWithAllData.getNomer());
         av.setNomerAG(savedWithAllData.getNomerAG());
         av.setDate(savedWithAllData.getDate());
+        av.setNachaloRabot(savedWithAllData.getNachaloRabot());
         av.setComment(savedWithAllData.getComment());
+        av.setLat(savedWithAllData.getLat());
+        av.setLng(savedWithAllData.getLng());
         List<O> b = new ArrayList<O>();
         for (Oborudovanie o : savedWithAllData.getBarcode()){
             b.add(new O(o.getCode()));
@@ -463,6 +538,16 @@ public class FlutterServiceBean {
             usl.add(u);
         }
         av.setPerformance_service(usl);
+        List<Soisp> soispolniteli = new ArrayList<Soisp>();
+        for (Soispolnitel o : savedWithAllData.getSoispolniteli()){
+            Soisp u = new Soisp();
+            u.setUsername(o.getUsername());
+
+            soispolniteli.add(u);
+        }
+        av.setSoispolniteli(soispolniteli);
+
+
         List<F> fo = new ArrayList<F>();
         for (Foto o : savedWithAllData.getFotos()){
             F u = new F();
@@ -470,6 +555,8 @@ public class FlutterServiceBean {
             fo.add(u);
         }
         av.setFotos(fo);
+
+
         List<OF> ofo = new ArrayList<OF>();
         for (OborudovanieFoto o : savedWithAllData.getOborudovanieFotos()){
             OF u = new OF();
@@ -477,6 +564,17 @@ public class FlutterServiceBean {
             ofo.add(u);
         }
         av.setOborudovanieFotos(ofo);
+
+        List<AF> afo = new ArrayList<AF>();
+        for (AvtoFoto o : savedWithAllData.getAvtoFotos()){
+            AF u = new AF();
+            u.setFile(o.getFile().toString());
+            afo.add(u);
+        }
+        av.setAvtofotos(afo);
+
+
+
         av.setStatus("VYPOLNENA");
         R re = new R();
         re.setReport(av);
@@ -488,7 +586,7 @@ public class FlutterServiceBean {
         return sent;
     }
 
-    private static boolean sendToBpium(String url, Object re) {
+    public static boolean sendToBpium(String url, Object re) {
         Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
 
         String json = g.toJson(re);
@@ -512,6 +610,56 @@ public class FlutterServiceBean {
             throw new RuntimeException(e);
         }
         return  ok.get();
+    }
+}
+class DutyDTO{
+    private Date date_from;
+    private Date date_until;
+    private String status;
+    private String fio;
+    private String username;
+
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setFio(String fio) {
+        this.fio = fio;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Date getDate_from() {
+        return date_from;
+    }
+
+    public Date getDate_until() {
+        return date_until;
+    }
+
+    public void setDate_from(Date date_from) {
+        this.date_from = date_from;
+    }
+
+    public void setDate_until(Date date_until) {
+        this.date_until = date_until;
+    }
+
+    public String getFio() {
+        return fio;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
 class ZayavkaDTO{
@@ -705,7 +853,13 @@ class ZayavkaDTO{
         r.setMessage(z.getMessage());
         r.setService(z.getService());
         r.setUsername(z.getUsername());
+        if(z.getUser()!=null){
+            r.setUsername(z.getUser().getUsername());
+        }
         r.setClient(z.getClient());
+        if(z.getKontragent()!=null){
+            r.setClient(z.getKontragent().getNazvanie());
+        }
         r.setAdres(z.getAdres());
         r.setComment_address(z.getComment_address());
         r.setContact_name(z.getContact_name());
@@ -747,13 +901,57 @@ class Avto{
     private String nomer_avto;
     private String nomerAG;
     private Date date;
+    private Date nachaloRabot;
     private String comment;
     private List<O> barcode;
     private List<U> performance_service;
     private List<F> fotos;
-    private List<F> avtofotos;
+    private List<AF> avtofotos;
     private List<OF> oborudovanieFotos;
+    private List<Soisp> soispolniteli;
     private String status;
+    private String lat;
+    private String lng;
+
+    public Date getNachaloRabot() {
+        return nachaloRabot;
+    }
+
+    public void setNachaloRabot(Date nachaloRabot) {
+        this.nachaloRabot = nachaloRabot;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public List<AF> getAvtofotos() {
+        return avtofotos;
+    }
+
+    public void setAvtofotos(List<AF> avtofotos) {
+        this.avtofotos = avtofotos;
+    }
+
+    public List<Soisp> getSoispolniteli() {
+        return soispolniteli;
+    }
+
+    public void setSoispolniteli(List<Soisp> soispolniteli) {
+        this.soispolniteli = soispolniteli;
+    }
 
     public List<OF> getOborudovanieFotos() {
         return oborudovanieFotos;
@@ -996,6 +1194,17 @@ class U{
         this.title = title;
     }
 }
+class Soisp{
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}
 class F{
     private  String file;
 
@@ -1008,6 +1217,17 @@ class F{
     }
 }
 class OF{
+    private  String file;
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+}
+class AF{
     private  String file;
 
     public String getFile() {

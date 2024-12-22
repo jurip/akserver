@@ -19,7 +19,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
+
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -28,14 +28,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="cheksDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="cheksDataGrid.create"/>
-            <button id="editBtn" action="cheksDataGrid.edit"/>
-            <button id="removeBtn" action="cheksDataGrid.remove"/>
             <simplePagination id="pagination" dataLoader="cheksDl"/>
         </hbox>
         <dataGrid id="cheksDataGrid"

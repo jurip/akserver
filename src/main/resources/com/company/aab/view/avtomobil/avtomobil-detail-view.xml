@@ -29,40 +29,44 @@
     </actions>
     <layout>
         <formLayout id="form" dataContainer="avtomobilDc">
+            <textField id="nomerField" property="nomer"/>
+            <textField id="markaField" property="marka"/>
             <dateTimePicker id="dateField" property="date"/>
             <textField id="statusField" property="status"/>
             <textField id="commentField" property="comment"/>
-            <textField id="nomerField" property="nomer"/>
-            <textField id="markaField" property="marka"/>
-            <textField id="nomerAGField" property="nomerAG"/>
-            <textField id="tenantAttributeField" property="tenantAttribute"/>
-            <textField id="usernameField" property="username"/>
         </formLayout>
         <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
             <columns>
                 <column property="code"/>
-                <column property="tenantAttribute"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
             <columns>
                 <column property="file"/>
-                <column property="tenantAttribute"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <dataGrid id="oborudovanieFotosDataGrid" dataContainer="oborudovanieFotosDc" width="100%" minHeight="20em">
             <columns>
                 <column property="file"/>
-                <column property="tenantAttribute"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <dataGrid id="performance_serviceDataGrid" dataContainer="performance_serviceDc" width="100%" minHeight="20em">
             <columns>
                 <column property="title"/>
-                <column property="tenantAttribute"/>
-                <column property="dop"/>
                 <column property="usluga"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

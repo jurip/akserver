@@ -29,6 +29,9 @@
             <columns>
                 <column property="file"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

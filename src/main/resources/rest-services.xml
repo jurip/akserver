@@ -11,6 +11,19 @@
         <method name="getAllUslugas">
             <param name="company"/>
         </method>
+        <method name="createUser">
+            <param name="username"/>
+            <param name="firstName"/>
+            <param name="lastName"/>
+            <param name="password"/>
+        </method>
+        <method name="changePassword">
+            <param name="username"/>
+            <param name="password"/>
+        </method>
+        <method name="getAllUsers">
+            <param name="company"/>
+        </method>
         <method name="loadDuties">
             <param name="username"/>
         </method>

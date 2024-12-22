@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://ticketDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="ticketDc"
+                  class="com.company.aab.entity.Ticket">
+            <fetchPlan extends="_base"/>
+            <loader/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="ticketDc">
+            <fileStorageUploadField id="fileField" property="file"/>
+            <button id="Download" text="msg://Download.text"/>
+            <textField id="klientField" property="klient"/>
+            <textField id="kontaktField" property="kontakt"/>
+            <textField id="opisanieField" property="opisanie"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+            <button id="send" text="msg://send.text"/>
+        </hbox>
+    </layout>
+</view>

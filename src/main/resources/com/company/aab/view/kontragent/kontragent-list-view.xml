@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://kontragentListView.title"
+      focusComponent="kontragentsDataGrid">
+    <data>
+        <collection id="kontragentsDc"
+                    class="com.company.aab.entity.Kontragent">
+            <fetchPlan extends="_base"/>
+            <loader id="kontragentsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Kontragent e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="kontragentsDataGrid.create"/>
+            <button id="editBtn" action="kontragentsDataGrid.edit"/>
+            <button id="removeBtn" action="kontragentsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="kontragentsDl"/>
+        </hbox>
+        <dataGrid id="kontragentsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="kontragentsDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="nazvanie"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

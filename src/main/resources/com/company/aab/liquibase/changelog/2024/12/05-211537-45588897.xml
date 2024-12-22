@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="akserver">
+        <createTable tableName="TIKET">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TIKET"/>
+            </column>
+            <column name="ZAYAVKA_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="akserver">
+        <createTable tableName="TIKET_FILE">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TIKET_FILE"/>
+            </column>
+            <column name="FILE_" type="VARCHAR(1024)"/>
+            <column name="TIKET_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="akserver">
+        <createIndex indexName="IDX_TIKET_FILE_TIKET" tableName="TIKET_FILE">
+            <column name="TIKET_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="TIKET_ID" baseTableName="TIKET_FILE"
+                                 constraintName="FK_TIKET_FILE_ON_TIKET" referencedColumnNames="ID"
+                                 referencedTableName="TIKET"/>
+    </changeSet>
+    <changeSet id="4" author="akserver">
+        <createIndex indexName="IDX_TIKET_ZAYAVKA" tableName="TIKET">
+            <column name="ZAYAVKA_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="ZAYAVKA_ID" baseTableName="TIKET" constraintName="FK_TIKET_ON_ZAYAVKA"
+                                 referencedColumnNames="ID" referencedTableName="ZAYAVKA"/>
+    </changeSet>
+</databaseChangeLog>

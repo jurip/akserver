@@ -1,6 +1,7 @@
 package com.company.aab.listener;
 
 import com.company.aab.app.FcmSender;
+import com.company.aab.entity.Ticket;
 import com.company.aab.entity.User;
 import com.company.aab.entity.Zayavka;
 import io.jmix.core.DataManager;
@@ -26,6 +27,11 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @Component
 public class ZayavkaEventListener {
     private final ObjectProvider<SessionData> sessionDataProvider;
+
+    @EventListener
+    public void onTicketSaving(final EntitySavingEvent<Ticket> event) {
+        
+    }
     private final DataManager dataManager;
 
     public ZayavkaEventListener(DataManager dataManager,ObjectProvider<SessionData> sessionDataProvider) {
@@ -36,7 +42,7 @@ public class ZayavkaEventListener {
     @EventListener
     public void onZayavkaSaving(final EntitySavingEvent<Zayavka> event) {
 
-        Zayavka z =  event.getEntity();
+       /* Zayavka z =  event.getEntity();
         if("avtokonnekt".equals(z.getTenantAttribute()))
             return;
         if (z.getUsername() == null) {
@@ -50,6 +56,9 @@ public class ZayavkaEventListener {
             }
 
         }
+        if(z.getUser()!=null){
+            z.setUsername(z.getUser().getUsername());
+        }
         if(z.getNachalo()==null){
             z.setNachalo(new Date());
         }
@@ -59,6 +68,7 @@ public class ZayavkaEventListener {
         if(z.getStatus()==null){
             z.setStatus("NOVAYA");
         }
+
 
         if(z.getUsername()!=null){
             User user = dataManager.load(User.class)
@@ -71,6 +81,6 @@ public class ZayavkaEventListener {
                 FcmSender.sendMessageToApp(user.getFcmRegistrationToken(),z);
 
             }
-        }
+        }*/
     }
 }

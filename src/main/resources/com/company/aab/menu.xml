@@ -2,9 +2,16 @@
 <menu-config xmlns="http://jmix.io/schema/flowui/menu">
 
     <menu id="application" title="msg://com.company.aab/menu.application.title" opened="true">
-        <item view="User.list" title="msg://com.company.aab.view.user/UserListView.title"/>
+        <item view="Kontragent.list" title="msg://com.company.aab.view.kontragent/kontragentListView.title"/>
+        <item view="Usluga.list" title="Услуги"/>
         <item view="Zayavka.list" title="msg://com.company.aab.view.zayavka/zayavkaListView.title"/>
         <item view="Avtomobil.list" title="msg://com.company.aab.view.avtomobil/avtomobilListView.title"/>
+        <item view="User.list" title="msg://com.company.aab.view.user/UserListView.title"/>
+        <item view="Ticket.list" title="msg://com.company.aab.view.ticket/ticketListView.title"/>
+        <item view="Chek.list" description="msg://com.company.aab/menu_config.Chek.list.description"
+              title="msg://com.company.aab/menu_config.Chek.list.title"/>
+        <item view="Peremeshenie.list" title="msg://com.company.aab.view.peremeshenie/peremeshenieListView.title"/>
+
 
     </menu>
 

@@ -24,7 +24,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -33,14 +32,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="avtomobilsDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="avtomobilsDataGrid.create"/>
-            <button id="editBtn" action="avtomobilsDataGrid.edit"/>
-            <button id="removeBtn" action="avtomobilsDataGrid.remove"/>
             <simplePagination id="pagination" dataLoader="avtomobilsDl"/>
         </hbox>
         <dataGrid id="avtomobilsDataGrid"
@@ -55,12 +47,11 @@
             </actions>
             <columns resizable="true">
                 <column property="username"/>
-                <column property="date"/>
-                <column property="status"/>
+                <column property="zayavka.nomer" header="заявка"/>
                 <column property="nomer"/>
                 <column property="marka"/>
-                <column property="nomerAG"/>
-                <column property="zayavka.nomer"/>
+                <column property="date"/>
+                <column property="status"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

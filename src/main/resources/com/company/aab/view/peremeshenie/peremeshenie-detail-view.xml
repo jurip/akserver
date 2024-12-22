@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://peremeshenieDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="peremeshenieDc"
+                  class="com.company.aab.entity.Peremeshenie">
+            <fetchPlan extends="_base">
+                <property name="fotos" fetchPlan="_base"/>
+                <property name="barcode" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="fotosDc" property="fotos"/>
+            <collection id="barcodeDc" property="barcode"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="peremeshenieDc">
+            <textField id="usernameField" property="username" title="msg://usernameField.title"/>
+            <dateTimePicker id="dateField" property="date"/>
+            <textField id="commentField" property="comment"/>
+        </formLayout>
+        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="file"/>
+            </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
+        </dataGrid>
+        <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="code"/>
+            </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

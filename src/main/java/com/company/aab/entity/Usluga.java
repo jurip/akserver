@@ -28,7 +28,7 @@ public class Usluga {
     private String title;
 
     @Column(name = "PRIORITET", length = 1)
-    private String prioritet;
+    private String prioritet = "a";
 
     @Column(name = "TENANT_ATTRIBUTE")
     @TenantId

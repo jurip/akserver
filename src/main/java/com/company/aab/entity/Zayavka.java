@@ -1,7 +1,9 @@
 package com.company.aab.entity;
 
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -11,10 +13,14 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "ZAYAVKA")
+@Table(name = "ZAYAVKA", indexes = {
+        @Index(name = "IDX_ZAYAVKA_USER", columnList = "USER_ID"),
+        @Index(name = "IDX_ZAYAVKA_KONTRAGENT", columnList = "KONTRAGENT_ID")
+})
 @Entity
 public class Zayavka {
     public static final String VYPOLNENA = "VYPOLNENA";
+
     public static final String OTMENA = "OTMENA";
 
     public static final String NOVAYA = "NOVAYA";
@@ -26,6 +32,11 @@ public class Zayavka {
     @Column(name = "ID", nullable = false)
     @Id
     private UUID id;
+
+    @OnDeleteInverse(DeletePolicy.DENY)
+    @JoinColumn(name = "KONTRAGENT_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Kontragent kontragent;
 
     @Column(name = "LAT", length = 25)
     private String lat;
@@ -99,7 +110,6 @@ public class Zayavka {
     }
 
 
-
     public String getLng() {
         return lng;
     }
@@ -107,9 +117,6 @@ public class Zayavka {
     public void setLng(String lng) {
         this.lng = lng;
     }
-
-
-
 
 
     public String getLat() {
@@ -188,6 +195,29 @@ public class Zayavka {
         return comment_address;
     }
 
+    @Composition
+    @OneToOne(fetch = FetchType.LAZY)
+    @OnDeleteInverse(DeletePolicy.CASCADE)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
+    public Kontragent getKontragent() {
+        return kontragent;
+    }
+
+    public void setKontragent(Kontragent kontragent) {
+        this.kontragent = kontragent;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+
     public void setComment_address(String comment_address) {
         this.comment_address = comment_address;
     }
@@ -255,4 +285,5 @@ public class Zayavka {
     public void setId(UUID id) {
         this.id = id;
     }
+
 }

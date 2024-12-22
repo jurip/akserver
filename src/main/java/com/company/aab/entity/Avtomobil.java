@@ -27,6 +27,16 @@ public class Avtomobil {
     @Id
     private UUID id;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "NACHALO_RABOT")
+    private Date nachaloRabot;
+
+    @Column(name = "LAT")
+    private String lat;
+
+    @Column(name = "LNG")
+    private String lng;
+
     @Column(name = "DATE_")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
@@ -57,17 +67,23 @@ public class Avtomobil {
     @OneToMany(mappedBy = "avtomobil")
     private List<AvtoUsluga> performance_service;
 
+    @Composition
+    @OneToMany(mappedBy = "avtomobil")
+    private List<Soispolnitel> soispolniteli;
+
     @Column(name = "NOMER")
     private String nomer;
 
     @Column(name = "MARKA")
     private String marka;
+
     @Column(name = "NOMER_AG")
     private String nomerAG;
 
     @Column(name = "TENANT_ATTRIBUTE")
     @TenantId
     private String tenantAttribute;
+
 
     public String getTenantAttribute() {
         return tenantAttribute;
@@ -79,6 +95,14 @@ public class Avtomobil {
 
     public String getNomerAG() {
         return nomerAG;
+    }
+
+    public List<Soispolnitel> getSoispolniteli() {
+        return soispolniteli;
+    }
+
+    public void setSoispolniteli(List<Soispolnitel> soispolniteli) {
+        this.soispolniteli = soispolniteli;
     }
 
     public void setNomerAG(String nomerAG) {
@@ -96,6 +120,30 @@ public class Avtomobil {
     @Column(name = "VERSION", nullable = false)
     @Version
     private Integer version;
+
+    public Date getNachaloRabot() {
+        return nachaloRabot;
+    }
+
+    public void setNachaloRabot(Date nachaloRabot) {
+        this.nachaloRabot = nachaloRabot;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
 
     public String getComment() {
         return comment;

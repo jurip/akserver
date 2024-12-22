@@ -12,6 +12,8 @@
                     <property name="oborudovanieFotos" fetchPlan="_base"/>
                     <property name="performance_service" fetchPlan="_base"/>
                 </property>
+                <property name="user" fetchPlan="_base"/>
+                <property name="kontragent" fetchPlan="_base"/>
             </fetchPlan>
             <loader/>
             <collection id="avtomobiliDc" property="avtomobili"/>
@@ -21,50 +23,61 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
         <formLayout id="form" dataContainer="zayavkaDc">
-            <textField id="usernameField" property="username"/>
-            <textField id="nomerField" property="nomer"/>
+            <entityPicker id="userField" property="user" required="true">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+                <validators>
+                    <notNull/>
+                </validators>
+            </entityPicker>
+            <textField id="nomerField" property="nomer" required="true">
+                <validators>
+                    <notBlank/>
+                </validators>
+            </textField>
             <dateTimePicker id="nachaloField" property="nachalo"/>
             <textField id="messageField" property="message"/>
-            <textField id="clientField" property="client"/>
+            <entityPicker id="kontragentField" property="kontragent" required="true">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+                <validators>
+                    <notNull/>
+                </validators>
+            </entityPicker>
             <textField id="adresField" property="adres"/>
-
-            <textField id="latField" property="lat"/>
-            <textField id="lngField" property="lng"/>
-            <textField id="serviceField" property="service"/>
             <textField id="comment_addressField" property="comment_address"/>
-            <textField id="statusField" property="status"/>
-
             <textField id="contact_nameField" property="contact_name"/>
             <textField id="contact_numberField" property="contact_number"/>
             <textField id="manager_nameField" property="manager_name"/>
             <textField id="manager_numberField" property="manager_number"/>
             <dateTimePicker id="end_date_timeField" property="end_date_time"/>
 
-
-
-
-
         </formLayout>
         <dataGrid id="avtomobiliDataGrid" dataContainer="avtomobiliDc" width="100%" minHeight="20em">
             <columns>
-                <column property="date"/>
-                <column property="status"/>
-                <column property="comment"/>
                 <column property="nomer"/>
                 <column property="marka"/>
-                <column property="nomerAG"/>
+                <column property="comment"/>
+                <column property="date"/>
+                <column property="status"/>
 
-                <column property="username"/>
             </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
         </dataGrid>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction"/>
+
             <button id="closeBtn" action="closeAction"/>
+            <button id="send" text="Послать"/>
         </hbox>
     </layout>
 </view>
