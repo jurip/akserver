@@ -23,6 +23,7 @@
             <textField id="klientField" property="klient"/>
             <textField id="kontaktField" property="kontakt"/>
             <textField id="opisanieField" property="opisanie"/>
+            <textField id="kontakt_nomerField" property="kontakt_nomer"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

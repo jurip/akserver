@@ -19,7 +19,7 @@
     <layout>
         <formLayout id="form" dataContainer="uslugaDc">
             <textField id="nameField" property="title"/>
-            <textField id="codeField" property="code"/>
+            <textField id="codeField" property="code" required="true"/>
             <textField id="prioritetField" property="prioritet"/>
         </formLayout>
         <hbox id="detailActions">

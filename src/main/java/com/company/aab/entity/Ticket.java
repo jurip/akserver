@@ -20,6 +20,9 @@ public class Ticket {
     @Id
     private UUID id;
 
+    @Column(name = "KONTAKT_NOMER")
+    private String kontakt_nomer;
+
     @Column(name = "USERNAME")
     private String username;
 
@@ -38,6 +41,14 @@ public class Ticket {
     @Column(name = "TENANT_ATTRIBUTE")
     @TenantId
     private String tenantAttribute;
+
+    public String getKontakt_nomer() {
+        return kontakt_nomer;
+    }
+
+    public void setKontakt_nomer(String kontakt_nomer) {
+        this.kontakt_nomer = kontakt_nomer;
+    }
 
     public String getUsername() {
         return username;

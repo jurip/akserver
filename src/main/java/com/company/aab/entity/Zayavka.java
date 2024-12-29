@@ -33,7 +33,7 @@ public class Zayavka {
     @Id
     private UUID id;
 
-    @OnDeleteInverse(DeletePolicy.DENY)
+    @OnDeleteInverse(DeletePolicy.UNLINK)
     @JoinColumn(name = "KONTRAGENT_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private Kontragent kontragent;

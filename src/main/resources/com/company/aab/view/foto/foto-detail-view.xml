@@ -19,6 +19,7 @@
     <layout>
         <formLayout id="form" dataContainer="fotoDc">
             <image property="file"/>
+            <button id="Download" text="Скачать"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

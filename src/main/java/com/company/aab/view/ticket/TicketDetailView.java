@@ -80,12 +80,22 @@ class TR{
       this.opisanie = t.getOpisanie();
       this.klient = t.getKlient();
       this.username = t.getUsername();
+      this.kontakt_nomer = t.getKontakt_nomer();
     }
     private String klient;
     private String kontakt;
+    private String kontakt_nomer;
     private String opisanie;
     private String file;
     private String username;
+
+    public String getKontakt_nomer() {
+        return kontakt_nomer;
+    }
+
+    public void setKontakt_nomer(String kontakt_nomer) {
+        this.kontakt_nomer = kontakt_nomer;
+    }
 
     public String getUsername() {
         return username;

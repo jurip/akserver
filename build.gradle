@@ -18,6 +18,9 @@ repositories {
     maven {
         url 'https://global.repo.jmix.io/repository/public'
     }
+    flatDir {
+        dirs "/home/jurip/dadata-client/build/libs"
+    }
 }
 
 dependencies {
@@ -32,8 +35,10 @@ dependencies {
     implementation 'io.jmix.flowui:jmix-flowui-themes'
     implementation 'io.jmix.datatools:jmix-datatools-starter'
     implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
+    implementation 'com.github.kuliginstepan:dadata-client:4.0.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     runtimeOnly 'org.hsqldb:hsqldb'
 
