@@ -24,6 +24,9 @@
             <textField id="usernameField" property="username"/>
             <dateTimePicker id="dateField" property="date"/>
             <textField id="commentField" property="comment"/>
+            <textField id="qrField" property="qr"/>
+            <button id="showChek" text="msg://chekDetailView.chek"  />
+            <textField id="company"/>
         </formLayout>
         <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
             <columns>

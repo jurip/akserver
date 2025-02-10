@@ -58,7 +58,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     @Autowired
     private LoginViewSupport loginViewSupport;
 
-    @Autowired
+    @ViewComponent
     private MessageBundle messageBundle;
 
     @Autowired
@@ -101,11 +101,11 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
     @Subscribe("login")
     public void onLogin(final LoginEvent event) {
-       // String username = multitenancyUiSupport.getUsernameByLocation(event.getUsername(), currentLocation);
+        String username = multitenancyUiSupport.getUsernameByLocation(event.getUsername(), currentLocation);
 
         try {
             loginViewSupport.authenticate(
-                    AuthDetails.of(event.getUsername(), event.getPassword())
+                    AuthDetails.of(username, event.getPassword())
                             .withLocale(login.getSelectedLocale())
                             .withRememberMe(login.isRememberMe())
             );

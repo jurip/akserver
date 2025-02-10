@@ -23,7 +23,7 @@
         <formLayout id="form" dataContainer="avtoUslugaDc">
             <entityPicker id="uslugaField" property="usluga">
                 <actions>
-                    <action id="entityOpenComposition" type="entity_openComposition"/>
+                    <action id="entityLookup" type="entity_lookup"/>
                     <action id="entityClear" type="entity_clear"/>
                 </actions>
             </entityPicker>

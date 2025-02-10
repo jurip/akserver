@@ -38,6 +38,17 @@ public class Chek {
     @Column(name = "USERNAME")
     private String username;
 
+    @Column(name = "QR")
+    private String qr;
+
+    public String getQr() {
+        return qr;
+    }
+
+    public void setQr(String qr) {
+        this.qr = qr;
+    }
+
     @Column(name = "DATE_")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;

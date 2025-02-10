@@ -28,6 +28,10 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="cheksDl">
+            <properties include=".*"/>
+        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <simplePagination id="pagination" dataLoader="cheksDl"/>
         </hbox>
@@ -42,8 +46,8 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="username"/>
                 <column property="date"/>
+                <column property="username"/>
                 <column property="comment"/>
             </columns>
         </dataGrid>

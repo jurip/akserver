@@ -241,6 +241,17 @@ public class Zayavka {
     public String getStatus() {
         return status;
     }
+    public  String getText() {
+        if (getStatus() == null) {
+            return null;
+        }
+        return switch (getStatus()) {
+            case "NOVAYA" -> "новая";
+            case "VYPOLNENA" -> "выполнена";
+            case "OTMENA" -> "отменена";
+            default -> "ошибка";
+        };
+    }
 
     public void setStatus(String status) {
         this.status = status;

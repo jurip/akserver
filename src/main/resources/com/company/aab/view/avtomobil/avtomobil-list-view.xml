@@ -32,6 +32,10 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="avtomobilsDl">
+            <properties include=".*"/>
+        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <simplePagination id="pagination" dataLoader="avtomobilsDl"/>
         </hbox>
@@ -51,7 +55,6 @@
                 <column property="nomer"/>
                 <column property="marka"/>
                 <column property="date"/>
-                <column property="status"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

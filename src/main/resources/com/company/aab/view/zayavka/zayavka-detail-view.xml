@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<view xmlns="http://jmix.io/schema/flowui/view"
+<view
       title="msg://zayavkaDetailView.title"
       focusComponent="form">
     <data>
@@ -26,6 +26,7 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
+
         <formLayout id="form" dataContainer="zayavkaDc">
             <entityPicker id="userField" property="user" required="true">
                 <actions>
@@ -52,7 +53,8 @@
                     <notNull/>
                 </validators>
             </entityPicker>
-            <textField id="adresField" property="adres"/>
+            <comboBox id="adresField" property="adres" />
+
             <textField id="comment_addressField" property="comment_address"/>
             <textField id="contact_nameField" property="contact_name"/>
             <textField id="contact_numberField" property="contact_number"/>

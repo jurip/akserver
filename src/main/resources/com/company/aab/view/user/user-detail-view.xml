@@ -31,7 +31,9 @@
             <textField id="firstNameField" property="firstName"/>
             <textField id="lastNameField" property="lastName"/>
             <textField id="emailField" property="email"/>
+            <textField id="roleField" property="role"/>
             <comboBox id="timeZoneField" property="timeZoneId"/>
+            <checkbox id="testField" property="test"/>
             <checkbox id="activeField" property="active"/>
         </formLayout>
         <hbox id="detailActions">

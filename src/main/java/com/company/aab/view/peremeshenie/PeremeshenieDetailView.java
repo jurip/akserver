@@ -33,7 +33,7 @@ public class PeremeshenieDetailView extends StandardDetailView<Peremeshenie> {
                     userStep.getFile() .getFileName(),
                     () -> fileStorage.openStream(userStep.getFile()));
             image.setSrc(streamResource);
-            image.setHeight(50, Unit.PIXELS);
+            image.setHeight(150, Unit.PIXELS);
 
             return image;
         });

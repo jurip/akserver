@@ -19,6 +19,11 @@
     <layout>
         <formLayout id="form" dataContainer="kontragentDc">
             <textField id="nazvanieField" property="nazvanie"/>
+            <textField id="contact_nameField" property="contact_name"/>
+            <textField id="contact_numberField" property="contact_number"/>
+            <textField id="manager_numberField" property="manager_number"/>
+            <textField id="manager_nameField" property="manager_name"/>
+            <comboBox id="adresField" property="adres"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

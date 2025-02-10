@@ -256,4 +256,15 @@ public class Avtomobil {
     public void setAvtoFotos(List<AvtoFoto> avtoFotos) {
         this.avtoFotos = avtoFotos;
     }
+    public  String getText() {
+        if (getStatus() == null) {
+            return null;
+        }
+        return switch (getStatus()) {
+            case "NOVAYA" -> "новая";
+            case "VYPOLNENA" -> "выполнена";
+            case "OTMENA" -> "отменена";
+            default -> "ошибка";
+        };
+    }
 }

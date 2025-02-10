@@ -34,6 +34,17 @@ public class User implements JmixUserDetails, HasTimeZone, AcceptsTenant {
     @Column(name = "TENANT")
     private String tenant;
 
+    @Column(name = "TEST")
+    private  Boolean test;
+
+    public Boolean getTest() {
+        return test;
+    }
+
+    public void setTest(Boolean test) {
+        this.test = test;
+    }
+
     @Override
     public String getTenantId() {
         return tenant;
@@ -71,6 +82,17 @@ public class User implements JmixUserDetails, HasTimeZone, AcceptsTenant {
     @Email
     @Column(name = "EMAIL")
     protected String email;
+
+    @Column(name = "ROLE")
+    protected String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     @Column(name = "ACTIVE")
     protected Boolean active = true;

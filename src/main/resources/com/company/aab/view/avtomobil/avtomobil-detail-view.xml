@@ -8,6 +8,7 @@
             <fetchPlan extends="_base">
                 <property name="barcode" fetchPlan="_base"/>
                 <property name="fotos" fetchPlan="_base"/>
+                <property name="avtoFotos" fetchPlan="_base"/>
                 <property name="oborudovanieFotos" fetchPlan="_base"/>
                 <property name="performance_service" fetchPlan="_base">
                     <property name="usluga" fetchPlan="_base"/>
@@ -15,6 +16,7 @@
             </fetchPlan>
             <loader/>
             <collection id="barcodeDc" property="barcode"/>
+            <collection id="avtoFotosDc" property="avtoFotos"/>
             <collection id="fotosDc" property="fotos"/>
             <collection id="oborudovanieFotosDc" property="oborudovanieFotos"/>
             <collection id="performance_serviceDc" property="performance_service"/>
@@ -34,10 +36,22 @@
             <dateTimePicker id="dateField" property="date"/>
             <textField id="statusField" property="status"/>
             <textField id="commentField" property="comment"/>
+            <textField id="latField" property="lat"/>
+            <textField id="lngField" property="lng"/>
+            <button id="button" text="открыть карту" icon="GOOGLE_PLUS"/>
+
         </formLayout>
         <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
             <columns>
                 <column property="code"/>
+            </columns>
+            <actions>
+                <action id="editAction" type="list_edit"/>
+            </actions>
+        </dataGrid>
+        <dataGrid id="avtoFotosDataGrid" dataContainer="avtoFotosDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="file"/>
             </columns>
             <actions>
                 <action id="editAction" type="list_edit"/>
@@ -62,10 +76,8 @@
         <dataGrid id="performance_serviceDataGrid" dataContainer="performance_serviceDc" width="100%" minHeight="20em">
             <columns>
                 <column property="title"/>
-                <column property="usluga"/>
             </columns>
             <actions>
-                <action id="editAction" type="list_edit"/>
             </actions>
         </dataGrid>
         <hbox id="detailActions">

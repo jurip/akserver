@@ -59,6 +59,7 @@
             </actions>
             <columns resizable="true">
                 <column property="tenant"/>
+                <column property="role"/>
                 <column property="username"/>
                 <column property="firstName"/>
                 <column property="lastName"/>

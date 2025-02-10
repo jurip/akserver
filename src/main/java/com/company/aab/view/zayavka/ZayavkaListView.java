@@ -1,10 +1,19 @@
 package com.company.aab.view.zayavka;
 
-import com.company.aab.entity.Avtomobil;
+import com.company.aab.entity.Foto;
 import com.company.aab.entity.Zayavka;
 import com.company.aab.view.main.MainView;
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import io.jmix.core.Metadata;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +47,13 @@ public class ZayavkaListView extends StandardListView<Zayavka> {
     protected String gradePartNameGenerator4(final Zayavka customer) {
         return getStyle(customer);
     }
-    @Install(to = "zayavkasDataGrid.status", subject = "partNameGenerator")
-    protected String gradePartNameGenerator5(final Zayavka customer) {
-        return getStyle(customer);
-    }
 
+   @Subscribe
+    public void onInit(InitEvent event) {
+        zayavkasDataGrid.addColumn(new TextRenderer<>
+                        (Zayavka::getText))
+                .setHeader("статус").setPartNameGenerator(this::gradePartNameGenerator4);
+    }
     private static String getStyle(Zayavka customer) {
         if (customer.getStatus() == null) {
             return null;

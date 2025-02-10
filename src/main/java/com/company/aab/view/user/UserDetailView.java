@@ -37,7 +37,7 @@ public class UserDetailView extends StandardDetailView<User> {
 
     @Autowired
     private EntityStates entityStates;
-    @Autowired
+    @ViewComponent
     private MessageBundle messageBundle;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -77,6 +77,8 @@ public class UserDetailView extends StandardDetailView<User> {
     }
     @Subscribe("tenantField")
     public void onTenantFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<String>, String> event) {
+        String u = usernameField.getValue();
+        if(u!="")
         usernameField.setValue(
                 multitenancyUiSupport.getUsernameByTenant(usernameField.getValue(), event.getValue())
         );
