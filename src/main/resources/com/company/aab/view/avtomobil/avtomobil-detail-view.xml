@@ -2,7 +2,7 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://avtomobilDetailView.title"
       focusComponent="form">
-    <data>
+    <data readOnly="true">
         <instance id="avtomobilDc"
                   class="com.company.aab.entity.Avtomobil">
             <fetchPlan extends="_base">

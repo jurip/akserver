@@ -36,12 +36,6 @@
         <method name="saveAvto">
             <param name="avto"/>
         </method>
-        <method name="updateAvtoFromBot">
-            <param name="avto"/>
-        </method>
-        <method name="saveAvtomobil">
-            <param name="avto"/>
-        </method>
 
         <method name="saveDuty">
             <param name="duty"/>

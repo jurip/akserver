@@ -15,9 +15,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FcmSender {
-
+    private static final Logger log = LoggerFactory.getLogger(FcmSender.class);
 
   public static void sendMessageToApp(String token,Zayavka zayavka)  {
     sendMessageToApp(token, ZayavkaDTO.getFrom(zayavka));
@@ -111,6 +113,7 @@ public class FcmSender {
  }
     try {
       String result = FirebaseMessaging.getInstance().send(message);
+      log.info("Sent message to mp: {}", message);
     }catch (Exception e){
       Log.error(e);
     }
@@ -140,6 +143,7 @@ public class FcmSender {
             .build();
 
     FirebaseMessaging.getInstance().send(message);
+    log.info("Message sent to topic: {}", message);
 
     System.out.println("Message to topic sent successfully!!");
   }

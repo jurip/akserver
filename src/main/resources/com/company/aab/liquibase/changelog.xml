@@ -12,6 +12,7 @@
     <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
     <include file="/io/jmix/multitenancy/liquibase/changelog.xml"/>
 
+
     <includeAll path="/com/company/aab/liquibase/changelog"/>
 
 </databaseChangeLog>

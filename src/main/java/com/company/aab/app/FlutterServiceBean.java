@@ -3,13 +3,15 @@ package com.company.aab.app;
 import com.company.aab.entity.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.openai.core.JsonValue;
-import com.openai.models.ChatCompletion;
-import com.openai.models.ChatCompletionCreateParams;
-import com.openai.models.ChatModel;
-import com.openai.models.ResponseFormatJsonSchema;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.jmix.core.*;
 import io.jmix.core.security.UserRepository;
+import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -32,6 +35,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service("flutterService")
 public class FlutterServiceBean {
+    private static final Logger log = LoggerFactory.getLogger(FlutterServiceBean.class);
     public static final String AVTOKONNEKT = "avtokonnekt";
     public static final String INFOGRAF = "infograf";
     private final DataManager dataManager;
@@ -62,6 +66,7 @@ public class FlutterServiceBean {
         u.setTenant(INFOGRAF);
         u.setActive(true);
         dataManager.save(u);
+        log.info("User created: {}", u);
         return u.getUsername();
     }
     public String changePassword(String username, String password){
@@ -90,6 +95,7 @@ public class FlutterServiceBean {
                         .parameter("username", username).one();
         u.setFcmRegistrationToken(token);
         dataManager.save(u);
+        log.info("User updated:{}", u);
         return "ok";
     }
     public Zayavka sendZayavkaUpdate(Zayavka zayavka){
@@ -112,7 +118,9 @@ public class FlutterServiceBean {
             String st = z.getTenantAttribute();
             if(Objects.equals(st, AVTOKONNEKT)||isTestUser(z.getUsername())){
                 RZ v =new RZ(new ZayavkaUpdate(z.getId().toString(), new Date(), z.getStatus()));
-                sendToBpium(getBipiumPathByUser(z.getUsername()) +"/api/webrequest/finish_request", v);
+                String url = getBipiumPathByUser(z.getUsername()) +"/api/webrequest/finish_request";
+                sendToBpium(url, v);
+                log.info("Zayavka update to bipium:{} {}",v, url );
             }
 
 
@@ -120,38 +128,13 @@ public class FlutterServiceBean {
 
         return z;
     }
-    public Avtomobil updateAvtoFromBot(Avtomobil avto){
-        Avtomobil a = dataManager.load(Avtomobil.class).id(avto.getId()).one();
-        if(avto.getMarka()!=null){
-            a.setMarka(avto.getMarka());
-        }
-        if(avto.getNomer()!=null){
-            a.setNomer(avto.getNomer());
-        }
-        if(a.getTenantAttribute().equals(AVTOKONNEKT)||isTestUser(a.getUsername())) {
-            R r = new R();
-            Avto ar = new Avto();
-            ar.setId(a.getId().toString());
-            ar.setMarka_avto(a.getMarka());
-            ar.setNomer_avto(a.getNomer());
-
-
-            r.setReport(ar);
-            sendToBpium(getBipiumPathByUser(a.getUsername()) + "/api/webrequest/avto?async=true", r);
-        }
-
-
-
-        return a;
-
-    }
-
     //from bipium
     public Zayavka updateZayavka(ZayavkaDTO zayavka) throws Exception {
             Zayavka z = dataManager.load(Zayavka.class).id(UUID.fromString(zayavka.getId())).one();
-        if (zayavka.getUsername() != null) {
+        if (zayavka.getUsername() != null&& zayavka.getUsername()!="") {
             z.setUsername(zayavka.getUsername());
-            z.setUser(null);
+
+            z.setUser(getUser(zayavka.getUsername()));
 
         }
             if (zayavka.getStatus() != null) z.setStatus(zayavka.getStatus());
@@ -161,8 +144,10 @@ public class FlutterServiceBean {
             if (zayavka.getAdres() != null) z.setAdres(zayavka.getAdres());
             if (zayavka.getComment_address() != null) z.setComment_address(zayavka.getComment_address());
             Zayavka r = dataManager.save(z);
+            log.info("Saved zayavka update from bipium {}", r);
+            ZayavkaDTO result = ZayavkaDTO.getFrom(r);
+            sendZayavkaToUserApp(result);
 
-            sendZayavkaToUserApp(ZayavkaDTO.getFrom(r));
 
             return r;
 
@@ -172,7 +157,13 @@ public class FlutterServiceBean {
 
     public Zayavka saveZayavka(ZayavkaDTO zayavka) throws Exception {
 
-        String user = zayavka.getUsername();
+        List already = dataManager.load(Zayavka.class)
+                .query("select z from Zayavka z where z.nomer = :nomer and z.tenantAttribute = :tenant")
+                .parameter("nomer", zayavka.getNomer())
+                .parameter("tenant",getTenantFromUsername(zayavka.getUsername()))
+                .list();
+        if(!already.isEmpty())
+            throw new IllegalStateException("dubl");
         Zayavka r = dataManager.create(Zayavka.class);
         r.setTenantAttribute(getTenantFromUsername(zayavka.getUsername()));
 
@@ -188,7 +179,8 @@ public class FlutterServiceBean {
         r.setContact_number(zayavka.getContact_number());
         r.setManager_name(zayavka.getManager_name());
         r.setManager_number(zayavka.getManager_number());
-        r.setUsername(user);
+        r.setUsername(zayavka.getUsername());
+        r.setUser(getUser(zayavka.getUsername()));
         r.setLat(zayavka.getLat());
         r.setLng(zayavka.getLng());
 
@@ -212,12 +204,6 @@ public class FlutterServiceBean {
         saveContext.saving(r);
         EntitySet result = dataManager.save(saveContext);
         zayavka.setId(result.get(r).getId().toString());
-
-
-
-
-        zayavka.setUsername(user);
-
 
         sendZayavkaToUserApp(zayavka);
 
@@ -364,6 +350,8 @@ public class FlutterServiceBean {
 
     }
     private String getBipiumPathByUser(String username){
+        if(username == null || username == "")
+            return bipiumPath;
         User u = getUser(username);
         String path = isTestUser(username)?bipiumtestPath:bipiumPath;
         return path;
@@ -377,27 +365,69 @@ public class FlutterServiceBean {
         ChekReport result = new ChekReport(new C(re.getUsername(), re.getComment(), fos, re.getQr()));
         return result;
     }
-    private static boolean sendMessageToBot(String message) {
+    private static final String API_URL = "http://46.8.225.182:8001/process_photo/";
+    private static final String API_KEY = "ftxph-ecfgh-abzyt-vargh";
 
-        AtomicBoolean ok = new AtomicBoolean(false);
+    private static String sendPostRequest(String fileUrl) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        //fileUrl = "fs://2025/02/16/7ad3db9e-01fc-f523-dd40-fded71b7d376.jpg?name=scaled_21dd4921-435f-4080-a23b-aa41eeb1c1ef3344823467500867828.jpg";
+        MediaType mediaType = MediaType.parse("application/json");
+        String jsonBody = String.format("{\"file_url\": \"%s\"}", fileUrl);
+        RequestBody body = RequestBody.create(jsonBody, mediaType);
+
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("X-API-KEY", API_KEY)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            ;
+            log.info("Otwet ii:code {}\n telo {}",response.code(), response.body().toString());
+            if(response.code() == 422)
+                return null;
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            return response.body().string();
+        }
+    }
+
+    private static JsonObject parseCarInfo(String jsonResponse) {
+        if(jsonResponse == null)
+            return null;
+        // Пример парсинга JSON-ответа
+        // Предполагаем, что ответ выглядит так: {"message":"Фото обработано","gpt_response":"Лада Ларгус  \nК279ТХ147"}
+        // Используем простой парсинг для демонстраци
+        JsonObject o = JsonParser.parseString(jsonResponse).getAsJsonObject();
+
+       return o;
+    }
+    private static JsonObject sendMessageToBot(String fileUrl, String reportId) {
+
+         //fileUrl = "fs://2025/02/16/bd2ee99e-3b06-710b-ca63-d1d275e4a595.jpg?name=scaled_109bc280-5b6e-41bd-9541-8fc0295bdd775478485042372812491.jpg";
+        //String reportId = "00534d83-38cb-d552-fd12-0e881322b7f0";
+
+        JsonObject carInfo = null;
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.telegram.org/bot7332996600:AAEysrKvQKQDMyu6zkOccJHvYOuEvv37ofo/sendMessage?chat_id=-4728519215&text="+message))
+            log.info("Posylaem w bot {}");
+            log.info("Posylaem v ii : {} {}", fileUrl, reportId);
+            String response = sendPostRequest(fileUrl);
+            if (response == null) return null;
 
-                    .timeout(Duration.of(10, SECONDS))
-                    .GET()
-                    .build();
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenAccept(stringHttpResponse -> {
-                        ok.set(stringHttpResponse.statusCode() == 200);
-                        System.out.println(stringHttpResponse);}).join();
+            log.info("Iz ii bota polucheno  {}: ", response);
+            carInfo = parseCarInfo(response);
+            // Парсинг ответа для получения марки и номера
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+
+        } catch (IOException e) {
+            log.error("Ощибка при отправке {} ", fileUrl, e);
         }
 
-        return ok.get();
+
+        return carInfo;
     }
     private String  getTenantFromUsername(String username){
        return username.split("\\|")[0];
@@ -456,36 +486,32 @@ public class FlutterServiceBean {
         }
         return true;
     }
-    public Avtomobil saveAvtomobil(Avtomobil avto){
-        Avtomobil a = dataManager.save(avto);
-        return a;
-    }
     //iz mp
-    public boolean saveAvto(Avtomobil avtoFromRest) {
+    public boolean saveAvto(Avtomobil avto) {
         Avtomobil newOrLoaded;
-        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avtoFromRest.getId()).optional();
+        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avto.getId()).optional();
 
         if(ra.isEmpty()) {
              newOrLoaded = dataManager.create(Avtomobil.class);
-            newOrLoaded.setZayavka(avtoFromRest.getZayavka());
-            newOrLoaded.setMarka(avtoFromRest.getMarka());
-            newOrLoaded.setNomer(avtoFromRest.getNomer());
-            newOrLoaded.setNomerAG(avtoFromRest.getNomerAG());
-            newOrLoaded.setUsername(avtoFromRest.getUsername());
-            newOrLoaded.setTenantAttribute(avtoFromRest.getTenantAttribute());
-            newOrLoaded.setLat(avtoFromRest.getLat());
-            newOrLoaded.setLng(avtoFromRest.getLng());
-            newOrLoaded.setNachaloRabot(avtoFromRest.getNachaloRabot());
+            newOrLoaded.setZayavka(avto.getZayavka());
+            newOrLoaded.setMarka(avto.getMarka());
+            newOrLoaded.setNomer(avto.getNomer());
+            newOrLoaded.setNomerAG(avto.getNomerAG());
+            newOrLoaded.setUsername(avto.getUsername());
+            newOrLoaded.setTenantAttribute(avto.getTenantAttribute());
+            newOrLoaded.setLat(avto.getLat());
+            newOrLoaded.setLng(avto.getLng());
+            newOrLoaded.setNachaloRabot(avto.getNachaloRabot());
 
 
         }else {
             newOrLoaded = ra.get();
         }
-        newOrLoaded.setComment(avtoFromRest.getComment());
-        newOrLoaded.setDate(avtoFromRest.getDate());
+        newOrLoaded.setComment(avto.getComment());
+        newOrLoaded.setDate(avto.getDate());
         newOrLoaded.setStatus("VYPOLNENA");
         List<AvtoFoto> afs = new ArrayList<AvtoFoto>();
-        for (AvtoFoto f : avtoFromRest.getAvtoFotos()){
+        for (AvtoFoto f : avto.getAvtoFotos()){
             AvtoFoto nf = dataManager.create(AvtoFoto.class);
             nf.setAvtomobil(newOrLoaded);
             nf.setFile(f.getFile());
@@ -496,11 +522,22 @@ public class FlutterServiceBean {
 
 
         }
-        if(!afs.isEmpty())
-         sendMessageToBot(afs.get(afs.size() -1).getFile().toString()+"%20"+avtoFromRest.getId().toString());
+        if(!afs.isEmpty()) {
+            JsonObject r = sendMessageToBot(afs.get(afs.size() - 1).getFile().toString(), avto.getId().toString());
+            if (r != null) {
+
+                if (r.get("Марка") != null && !r.get("Марка").isJsonNull()) {
+
+                    newOrLoaded.setMarka(r.get("Марка").getAsString());
+                }
+                if (r.get("Госномер") != null && !r.get("Госномер").isJsonNull())
+                    newOrLoaded.setNomer(r.get("Госномер").getAsString());
+            }
+        }
+
 
         List<Foto> fs = new ArrayList<Foto>();
-        for (Foto f : avtoFromRest.getFotos()){
+        for (Foto f : avto.getFotos()){
             Foto nf = dataManager.create(Foto.class);
             nf.setAvtomobil(newOrLoaded);
             nf.setFile(f.getFile());
@@ -510,35 +547,35 @@ public class FlutterServiceBean {
 
         }
         List<OborudovanieFoto> ofs = new ArrayList<OborudovanieFoto>();
-        for (OborudovanieFoto of : avtoFromRest.getOborudovanieFotos()){
+        for (OborudovanieFoto of : avto.getOborudovanieFotos()){
             OborudovanieFoto nf = dataManager.create(OborudovanieFoto.class);
             nf.setAvtomobil(newOrLoaded);
             nf.setFile(of.getFile());
-            nf.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            nf.setTenantAttribute(avto.getTenantAttribute());
             ofs.add(nf);
 
         }
         newOrLoaded.setOborudovanieFotos(ofs);
 
         List<Oborudovanie> os = new ArrayList<Oborudovanie>();
-        for (Oborudovanie o : avtoFromRest.getBarcode()){
+        for (Oborudovanie o : avto.getBarcode()){
             Oborudovanie of = dataManager.create(Oborudovanie.class);
             of.setAvtomobil(newOrLoaded);
             of.setCode(o.getCode());
-            of.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            of.setTenantAttribute(avto.getTenantAttribute());
             os.add(of);
 
         }
         newOrLoaded.setBarcode(os);
 
         List<AvtoUsluga> us = new ArrayList<AvtoUsluga>();
-        for (AvtoUsluga u : avtoFromRest.getPerformance_service()){
+        for (AvtoUsluga u : avto.getPerformance_service()){
             AvtoUsluga of = dataManager.create(AvtoUsluga.class);
             of.setAvtomobil(newOrLoaded);
             of.setTitle(u.getTitle());
             of.setKolichestvo(u.getKolichestvo());
             of.setSverh(u.getSverh());
-            of.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            of.setTenantAttribute(avto.getTenantAttribute());
             us.add(of);
 
         }
@@ -546,12 +583,12 @@ public class FlutterServiceBean {
 
 
         List<Soispolnitel> ss = new ArrayList<Soispolnitel>();
-        for (Soispolnitel si : avtoFromRest.getSoispolniteli()){
+        for (Soispolnitel si : avto.getSoispolniteli()){
             Soispolnitel sf = dataManager.create(Soispolnitel.class);
             sf.setAvtomobil(newOrLoaded);
             sf.setUsername(si.getUsername());
 
-            sf.setTenantAttribute(avtoFromRest.getTenantAttribute());
+            sf.setTenantAttribute(avto.getTenantAttribute());
             ss.add(sf);
 
         }
@@ -580,6 +617,8 @@ public class FlutterServiceBean {
         saveContext.saving(newOrLoaded);
         EntitySet s = dataManager.save(saveContext);
         newOrLoaded = s.get(newOrLoaded);
+
+        log.info("Mp sohranjaet otchet: {}", newOrLoaded);
 
 
         if(newOrLoaded.getTenantAttribute().equals(AVTOKONNEKT)||isTestUser( newOrLoaded.getUsername()))
@@ -665,6 +704,7 @@ public class FlutterServiceBean {
         if(!sent){
             savedWithAllData.setStatus("NOVAYA");
             dataManager.save(savedWithAllData);
+            log.info("Ne otpravil v bipium: {}", savedWithAllData);
         }
         return sent;
     }
@@ -683,14 +723,15 @@ public class FlutterServiceBean {
                     .headers("Content-Type", "Content-Type: application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
-            System.out.print(json);
+
+
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenAccept(stringHttpResponse -> {
                         ok.set(stringHttpResponse.statusCode() == 200);
-                        System.out.println(stringHttpResponse);}).join();
+                        log.info("При отправке v bipium: {}",json);}).join();
 
         } catch (Exception e) {
-           System.out.println(e.getMessage());
+           log.error("Oshibka При отправке: {}",json, e );
         }
         return  ok.get();
     }

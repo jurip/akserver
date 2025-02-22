@@ -16,6 +16,7 @@ import com.vaadin.flow.server.StreamResource;
 import io.jmix.core.FileStorage;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,16 @@ public class AvtomobilDetailView extends StandardDetailView<Avtomobil> {
     private FileStorage fileStorage;
     @ViewComponent
     private InstanceContainer<Avtomobil> avtomobilDc;
+    @Override
+    public boolean hasUnsavedChanges() {
+        return isReadOnly() ? false : super.hasUnsavedChanges();
+    }
 
+    @Subscribe(target = Target.DATA_CONTEXT)
+    public void onPreSave(final DataContext.PreSaveEvent event) {
+        if (isReadOnly())
+            event.preventSave();
+    }
     @Subscribe("button")
     protected void onButtonClick(final ClickEvent<JmixButton> event) {
         UI.getCurrent().getPage().open("https://maps.yandex.ru/?text=" +
