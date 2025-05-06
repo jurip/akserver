@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:calendar="http://jmix.io/schema/fullcalendar/ui"
+      title="msg://calendarView.title">
+    <data>
+        <collection id="zayavkasDc"
+                    class="com.company.aab.entity.Zayavka">
+            <fetchPlan extends="_base">
+                <property name="avtomobili" fetchPlan="_base">
+                    <property name="barcode" fetchPlan="_base"/>
+                    <property name="fotos" fetchPlan="_base"/>
+                    <property name="oborudovanieFotos" fetchPlan="_base"/>
+                    <property name="performance_service" fetchPlan="_base"/>
+                </property>
+                <property name="user" fetchPlan="_base"/>
+                <property name="kontragent" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="zayavkasDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Zayavka e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <comboBox id="displayModesBox" width="15em" overlayWidth="15em"/>
+        <calendar:calendar id="calendar"
+
+                           height="100%"
+                           width="100%"
+                           minHeight="30em"
+        >
+            <calendar:dataProviders>
+                <calendar:containerDataProvider dataContainer="zayavkasDc"
+                                                title="nomer"
+                                                startDateTime="nachalo"
+                                                endDateTime="nachalo"
+                                                description="client"
+                                                />
+            </calendar:dataProviders>
+        </calendar:calendar>
+    </layout>
+</view>

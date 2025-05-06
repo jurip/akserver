@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://registrationView.title">
+    <facets>
+        <urlQueryParameters>
+
+        </urlQueryParameters>
+    </facets>
+    <layout>
+        <formLayout id="form" width="300px" alignSelf="CENTER" >
+
+            <textField id="company" label="Название компании">
+                <validators>
+                    <notBlank message="Компания не может быть пустой"/>
+
+                </validators>
+            </textField>
+            <textField id="login" label="Логин администратора"/>
+            <textField id="pass1" label="Пароль"/>
+            <textField id="pass2" label="Пароль повторно"/>
+            <textField id="invite" label="Промокод">
+                <validators>
+                    <notBlank message="Промокод не может быть пустой"/>
+                </validators>
+            </textField>
+            <button id="create" text="Создать"/>
+        </formLayout>
+
+    </layout>
+</view>

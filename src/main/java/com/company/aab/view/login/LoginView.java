@@ -13,6 +13,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.view.*;
@@ -47,6 +48,8 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     private MultitenancyUiSupport multitenancyUiSupport;
 
     private Location currentLocation;
+    @ViewComponent
+    private TypedTextField<Object> company;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -75,8 +78,8 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        initLocales();
-        initDefaultCredentials();
+        //initLocales();
+        //initDefaultCredentials();
     }
 
     protected void initLocales() {
@@ -101,7 +104,9 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
     @Subscribe("login")
     public void onLogin(final LoginEvent event) {
-        String username = multitenancyUiSupport.getUsernameByLocation(event.getUsername(), currentLocation);
+        String username = event.getUsername();
+        if(!company.isEmpty())
+            username = company.getValue()+"|"+ username;
 
         try {
             loginViewSupport.authenticate(

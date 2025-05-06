@@ -57,7 +57,7 @@
             </actions>
             <columns resizable="true">
                 <column property="nachalo"/>
-                <column property="username"/>
+                <column property="user"/>
                 <column property="client"/>
                 <column property="nomer"/>
             </columns>

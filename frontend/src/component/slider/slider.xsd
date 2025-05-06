@@ -9,6 +9,9 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="layout:baseComponent">
+                    <xs:choice minOccurs="0">
+                        <xs:element name="tooltip" type="layout:tooltipElement"/>
+                    </xs:choice>
                     <xs:attribute name="min" type="xs:integer"/>
                     <xs:attribute name="max" type="xs:integer"/>
                     <xs:attribute name="value" type="xs:integer"/>

@@ -30,17 +30,30 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
+
         <formLayout id="form" dataContainer="avtomobilDc">
             <textField id="nomerField" property="nomer"/>
-            <textField id="markaField" property="marka"/>
             <dateTimePicker id="dateField" property="date"/>
             <textField id="statusField" property="status"/>
             <textField id="commentField" property="comment"/>
             <textField id="latField" property="lat"/>
             <textField id="lngField" property="lng"/>
             <button id="button" text="открыть карту" icon="GOOGLE_PLUS"/>
-
         </formLayout>
+        <article text="Фотографии отчета"/>
+        <hbox id="fotos">
+        </hbox>
+        <button id="download" text="Скачать все файлы"/>
+        <dataGrid id="performance_serviceDataGrid" dataContainer="performance_serviceDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="usluga"/>
+            </columns>
+            <actions>
+            </actions>
+        </dataGrid>
+        <article text="Фотографии оборудования"/>
+        <hbox id="oFotos"/>
+        <button id="downloadoFotos" text="Скачать все файлы оборудования"/>
         <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
             <columns>
                 <column property="code"/>
@@ -49,37 +62,13 @@
                 <action id="editAction" type="list_edit"/>
             </actions>
         </dataGrid>
-        <dataGrid id="avtoFotosDataGrid" dataContainer="avtoFotosDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="file"/>
-            </columns>
-            <actions>
-                <action id="editAction" type="list_edit"/>
-            </actions>
-        </dataGrid>
-        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="file"/>
-            </columns>
-            <actions>
-                <action id="editAction" type="list_edit"/>
-            </actions>
-        </dataGrid>
-        <dataGrid id="oborudovanieFotosDataGrid" dataContainer="oborudovanieFotosDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="file"/>
-            </columns>
-            <actions>
-                <action id="editAction" type="list_edit"/>
-            </actions>
-        </dataGrid>
-        <dataGrid id="performance_serviceDataGrid" dataContainer="performance_serviceDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="title"/>
-            </columns>
-            <actions>
-            </actions>
-        </dataGrid>
+        <article text="Фотографии обьекта"/>
+        <hbox id="aFotos"/>
+        <button id="downloadaFotos" text="Скачать все файлы обьекта"/>
+
+
+
+
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>

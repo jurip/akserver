@@ -1,46 +1,44 @@
-import {html, LitElement} from 'lit';
-import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
-import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import {TooltipController} from "@vaadin/component-base/src/tooltip-controller";
-import {css, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {buttonStyles} from '@vaadin/button/src/vaadin-button-base.js';
-import {button as buttonLumoStyles} from '@vaadin/button/theme/lumo/vaadin-button-styles.js';
-import {ButtonMixin} from '@vaadin/button/src/vaadin-button-mixin.js';
+import {html} from "@polymer/polymer";
+import {Button} from "@vaadin/button";
+import {css, registerStyles} from "@vaadin/vaadin-themable-mixin";
 
-const themeToggleStyles = css`
-    :host {
+/**
+ * Use registerStyles instead of the `<style>` tag to make sure
+ * that this CSS will override core styles of `vaadin-button`.
+ */
+registerStyles(
+    'theme-toggle',
+    css`
+      :host {
         background: transparent;
-        color: var(--lumo-text-color);
-        min-width: var(--lumo-button-size);
-        padding-left: calc(var(--lumo-button-size) / 4);
-        padding-right: calc(var(--lumo-button-size) / 4);
-    }
-`;
 
-class ThemeToggle extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(LitElement)))) {
+        color: var(--lumo-text-color);
+      }
+    `,
+    {moduleId: 'theme-toggle-styles'},
+);
+
+class ThemeToggle extends Button {
 
     static get is() {
         return 'theme-toggle';
     }
 
-    static get styles() {
-        return [buttonStyles, buttonLumoStyles, themeToggleStyles];
-    }
-
-    render() {
+    static get template() {
         return html`
-              <vaadin-combo-box
-                label="Country"
-                item-label-path="name"
-                item-value-path="id"
-                .items="${this.items}"
-              ></vaadin-combo-box>
             <div class="vaadin-button-container">
-                <vaadin-icon icon="vaadin:adjust"></vaadin-icon>
+                <span part="prefix" aria-hidden="true">
+                  <slot name="prefix"></slot>
+                </span>
+                <span part="label">
+                    <slot></slot>
+                </span>
             </div>
 
             <slot name="tooltip"></slot>
+            <div>
+                <slot name="gallery"></slot>
+            </div>
         `;
     }
 
@@ -50,6 +48,12 @@ class ThemeToggle extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(Li
                 type: String,
                 value: 'Theme toggle',
                 reflectToAttribute: true,
+            },
+
+            storageKey: {
+                type: String,
+                value: 'jmix.flowui.theme',
+                observer: '_onStorageKeyChanged'
             }
         };
     }
@@ -57,17 +61,17 @@ class ThemeToggle extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(Li
     constructor() {
         super();
 
-        this._storageKey = "app-theme";
-        
-        //this.addEventListener('click', () => this.toggleTheme());
+        this.addEventListener('click', () => this.toggleTheme());
+        this.addEventListener('click', () => {
+            const customEvent = new CustomEvent('theme-changed', {detail: {value: this.getCurrentTheme()}});
+            this.dispatchEvent(customEvent);
+        });
     }
 
     /** @protected */
     ready() {
         super.ready();
 
-        this._tooltipController = new TooltipController(this);
-        this.addController(this._tooltipController);
         this.applyStorageTheme();
     }
 
@@ -80,7 +84,7 @@ class ThemeToggle extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(Li
     }
 
     getStorageTheme() {
-        return localStorage.getItem(this._storageKey);
+        return localStorage.getItem(this.storageKey);
     }
 
     getCurrentTheme() {
@@ -94,13 +98,20 @@ class ThemeToggle extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(Li
 
     applyTheme(theme) {
         document.documentElement.setAttribute("theme", theme);
-        localStorage.setItem(this._storageKey, theme);
+        localStorage.setItem(this.storageKey, theme);
+    }
 
-        const customEvent = new CustomEvent('theme-changed', {detail: {value: theme}});
-        this.dispatchEvent(customEvent);
+    /** @protected */
+    _onStorageKeyChanged(storageKey, oldStorageKey) {
+        const theme = localStorage.getItem(oldStorageKey);
+        localStorage.removeItem(oldStorageKey);
+
+        if (theme) {
+            localStorage.setItem(storageKey, theme);
+        }
     }
 }
 
-defineCustomElement(ThemeToggle);
+customElements.define(ThemeToggle.is, ThemeToggle);
 
 export {ThemeToggle};

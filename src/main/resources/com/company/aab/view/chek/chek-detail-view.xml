@@ -28,14 +28,10 @@
             <button id="showChek" text="msg://chekDetailView.chek"  />
             <textField id="company"/>
         </formLayout>
-        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="file"/>
-            </columns>
-            <actions>
-                <action id="editAction" type="list_edit"/>
-            </actions>
-        </dataGrid>
+        <article text="Фотографии чека"/>
+        <hbox id="fotos"/>
+        <button id="downloadFotos" text="Скачать все файлы"/>
+
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>

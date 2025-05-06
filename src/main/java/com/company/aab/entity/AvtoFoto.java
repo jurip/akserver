@@ -15,7 +15,7 @@ import java.util.UUID;
         @Index(name = "IDX_AVTOFOTO_AVTOMOBIL", columnList = "AVTOMOBIL_ID")
 })
 @Entity
-public class AvtoFoto {
+public class AvtoFoto implements WithFile {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id

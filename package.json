@@ -3,6 +3,14 @@
   "license": "UNLICENSED",
   "type": "module",
   "dependencies": {
+    "@fullcalendar/core": "6.1.15",
+    "@fullcalendar/daygrid": "6.1.15",
+    "@fullcalendar/interaction": "6.1.15",
+    "@fullcalendar/list": "6.1.15",
+    "@fullcalendar/moment": "6.1.15",
+    "@fullcalendar/moment-timezone": "6.1.15",
+    "@fullcalendar/multimonth": "6.1.15",
+    "@fullcalendar/timegrid": "6.1.15",
     "@polymer/polymer": "3.5.1",
     "@vaadin/bundles": "24.4.17",
     "@vaadin/common-frontend": "0.0.19",
@@ -17,9 +25,11 @@
     "ace-builds": "1.18.0",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
+    "echarts": "5.4.3",
     "jquery": "1.9.1",
     "jquery-ui": "1.13.2",
     "lit": "3.1.4",
+    "moment": "2.30.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "6.26.2"
@@ -46,6 +56,14 @@
   },
   "vaadin": {
     "dependencies": {
+      "@fullcalendar/core": "6.1.15",
+      "@fullcalendar/daygrid": "6.1.15",
+      "@fullcalendar/interaction": "6.1.15",
+      "@fullcalendar/list": "6.1.15",
+      "@fullcalendar/moment": "6.1.15",
+      "@fullcalendar/moment-timezone": "6.1.15",
+      "@fullcalendar/multimonth": "6.1.15",
+      "@fullcalendar/timegrid": "6.1.15",
       "@polymer/polymer": "3.5.1",
       "@vaadin/bundles": "24.4.17",
       "@vaadin/common-frontend": "0.0.19",
@@ -60,9 +78,11 @@
       "ace-builds": "1.18.0",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
+      "echarts": "5.4.3",
       "jquery": "1.9.1",
       "jquery-ui": "1.13.2",
       "lit": "3.1.4",
+      "moment": "2.30.1",
       "react": "18.3.1",
       "react-dom": "18.3.1",
       "react-router-dom": "6.26.2"
@@ -87,7 +107,7 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "19407b7f4f4cd351985b7d364eacb86cf5bed3b6f49dddcb769c70e719baec8a"
+    "hash": "0a5c312c618fd7ceb97b3cd7cd46722af71cd110998570998e30c988600f1322"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -109,6 +129,16 @@
     "@vaadin/react-components": "$@vaadin/react-components",
     "react-dom": "$react-dom",
     "react-router-dom": "$react-router-dom",
-    "react": "$react"
+    "react": "$react",
+    "@fullcalendar/interaction": "$@fullcalendar/interaction",
+    "@fullcalendar/timegrid": "$@fullcalendar/timegrid",
+    "@fullcalendar/core": "$@fullcalendar/core",
+    "@fullcalendar/list": "$@fullcalendar/list",
+    "moment": "$moment",
+    "@fullcalendar/multimonth": "$@fullcalendar/multimonth",
+    "@fullcalendar/moment": "$@fullcalendar/moment",
+    "@fullcalendar/moment-timezone": "$@fullcalendar/moment-timezone",
+    "@fullcalendar/daygrid": "$@fullcalendar/daygrid",
+    "echarts": "$echarts"
   }
 }

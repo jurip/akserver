@@ -36,6 +36,17 @@ public class User implements JmixUserDetails, HasTimeZone {
     @Column(name = "TEST")
     private  Boolean test;
 
+    @Column(name = "TIP")
+    private String tip;
+
+    public String getTip() {
+        return tip;
+    }
+
+    public void setTip(String tip) {
+        this.tip = tip;
+    }
+
     public Boolean getTest() {
         return test;
     }

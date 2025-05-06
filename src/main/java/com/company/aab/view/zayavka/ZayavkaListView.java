@@ -31,7 +31,7 @@ public class ZayavkaListView extends StandardListView<Zayavka> {
     @ViewComponent
     private DataGrid<Zayavka> zayavkasDataGrid;
 
-    @Install(to = "zayavkasDataGrid.username", subject = "partNameGenerator")
+    @Install(to = "zayavkasDataGrid.user", subject = "partNameGenerator")
     protected String gradePartNameGenerator(final Zayavka customer) {
         return getStyle(customer);
     }

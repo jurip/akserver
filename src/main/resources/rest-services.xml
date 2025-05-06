@@ -36,6 +36,15 @@
         <method name="saveAvto">
             <param name="avto"/>
         </method>
+        <method name="resendAvto">
+            <param name="id"/>
+        </method>
+
+        <method name="updateAvto">
+            <param name="avto"/>
+            <param name="status"/>
+        </method>
+
 
         <method name="saveDuty">
             <param name="duty"/>

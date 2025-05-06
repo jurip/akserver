@@ -12,7 +12,10 @@
                 <property name="performance_service" fetchPlan="_base">
                     <property name="usluga" fetchPlan="_base"/>
                 </property>
-                <property name="zayavka" fetchPlan="_base"/>
+                <property name="zayavka" fetchPlan="_base">
+                    <property name="user"/>
+                </property>
+
             </fetchPlan>
             <loader id="avtomobilsDl" readOnly="true">
                 <query>
@@ -50,7 +53,8 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="username"/>
+                <column property="zayavka.user"/>
+                <column property="zayavka.client"/>
                 <column property="zayavka.nomer" header="заявка"/>
                 <column property="nomer"/>
                 <column property="marka"/>

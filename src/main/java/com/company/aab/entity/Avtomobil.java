@@ -6,6 +6,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.dynattr.model.Categorized;
+import io.jmix.dynattr.model.Category;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -19,6 +21,9 @@ import java.util.UUID;
 @Entity
 public class Avtomobil {
     public static final String VYPOLNENA = "VYPOLNENA";
+    public static final String POSLANA_V_BIPIUM = "POSLANA_V_BIPIUM";
+
+
 
     public static final String NOVAYA = "NOVAYA";
 
@@ -267,4 +272,5 @@ public class Avtomobil {
             default -> "ошибка";
         };
     }
+
 }

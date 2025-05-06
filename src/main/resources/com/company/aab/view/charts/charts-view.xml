@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui"
+      title="msg://chartsView.title">
+    <layout>
+        <charts:chart id="bar" width="40em" height="100%" minHeight="30em" alignSelf="STRETCH">
+            <charts:series>
+                <charts:bar name="Salary"/>
+                <charts:line name="Assessment Total"/>
+            </charts:series>
+            <charts:xAxes>
+                <charts:xAxis/>
+            </charts:xAxes>
+
+        </charts:chart>
+
+    </layout>
+</view>

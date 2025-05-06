@@ -34,6 +34,10 @@ public class AvtoUsluga {
     @TenantId
     private String tenantAttribute;
 
+    public void setUsluga(Usluga usluga) {
+        this.usluga = usluga;
+    }
+
     public String getTenantAttribute() {
         return tenantAttribute;
     }

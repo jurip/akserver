@@ -40,6 +40,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.apache.commons:commons-lang3:3.0'
+    implementation 'org.telegram:telegrambots-springboot-longpolling-starter:8.0.0'
+    implementation 'org.telegram:telegrambots-client:8.0.0'
 
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -63,6 +66,19 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'io.jmix.quartz:jmix-quartz-starter'
     implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
+    implementation 'io.jmix.fullcalendar:jmix-fullcalendar-flowui-starter'
+    implementation 'io.jmix.charts:jmix-charts-flowui-starter'
+    implementation 'io.jmix.email:jmix-email-flowui-starter'
+    implementation 'io.jmix.email:jmix-email-starter'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+    implementation 'io.jmix.dynattr:jmix-dynattr-flowui-starter'
+    implementation 'io.jmix.dynattr:jmix-dynattr-starter'
 }
 
 configurations.implementation {

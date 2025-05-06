@@ -27,14 +27,10 @@
             <dateTimePicker id="dateField" property="date"/>
             <textField id="commentField" property="comment"/>
         </formLayout>
-        <dataGrid id="fotosDataGrid" dataContainer="fotosDc" width="100%" minHeight="20em">
-            <columns>
-                <column property="file"/>
-            </columns>
-            <actions>
-                <action id="editAction" type="list_edit"/>
-            </actions>
-        </dataGrid>
+        <article text="Фотографии оборудования"/>
+        <hbox id="fotos"/>
+        <button id="downloadFotos" text="Скачать все файлы"/>
+
         <dataGrid id="barcodeDataGrid" dataContainer="barcodeDc" width="100%" minHeight="20em">
             <columns>
                 <column property="code"/>

@@ -11,6 +11,10 @@
         <item view="Chek.list" description="msg://com.company.aab/menu_config.Chek.list.description"
               title="msg://com.company.aab/menu_config.Chek.list.title"/>
         <item view="Peremeshenie.list" title="msg://com.company.aab.view.peremeshenie/peremeshenieListView.title"/>
+        <item view="CalendarView" title="msg://com.company.aab.view.calendar/calendarView.title"/>
+        <item view="ChartsView" title="msg://com.company.aab.view.charts/chartsView.title"/>
+        <item view="Invite.list" title="msg://com.company.aab.view.invite/inviteListView.title"/>
+        <item view="Otchet.list" title="msg://com.company.aab.view.avtomobil/otchetListView.title"/>
 
 
     </menu>

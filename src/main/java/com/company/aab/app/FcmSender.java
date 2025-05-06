@@ -24,7 +24,21 @@ public class FcmSender {
   public static void sendMessageToApp(String token,Zayavka zayavka)  {
     sendMessageToApp(token, ZayavkaDTO.getFrom(zayavka));
   }
-
+    public static void sendAvtoUpdateMessageToApp(String token,String avtoId){
+        Message message =
+                Message.builder()
+                        .putData("tip_soobsheniya", "avto_update")
+                        .putData("avtoId", avtoId)
+                        .putData("status", "VYPOLNENA")
+                        .setToken(token)
+                        .build();
+        try {
+            String result = FirebaseMessaging.getInstance().send(message);
+            log.info("Sent message to mp avto id: {}", avtoId);
+        }catch (Exception e){
+            Log.error(e);
+        }
+    }
   public static void sendMessageToApp(String token,ZayavkaDTO zayavka) {
 
     List<Avto> as = zayavka.getAvtomobili();
@@ -44,7 +58,7 @@ public class FcmSender {
  if("NOVAYA".equals(zayavka.getStatus())) {
    message =
            Message.builder()
-
+                   //.putData("message_type", "zayavka_create")
                    .putData("id", zayavka.getId().toString())
                    .putData("message", zayavka.getMessage() != null ? zayavka.getMessage() : "")
                    .putData("adres", zayavka.getAdres() != null ? zayavka.getAdres() : "")
@@ -76,7 +90,7 @@ public class FcmSender {
  }else{
    message =
            Message.builder()
-
+                   //.putData("message_type", "zayavka_create")
                    .putData("id", zayavka.getId().toString())
                    .putData("message", zayavka.getMessage() != null ? zayavka.getMessage() : "")
                    .putData("adres", zayavka.getAdres() != null ? zayavka.getAdres() : "")

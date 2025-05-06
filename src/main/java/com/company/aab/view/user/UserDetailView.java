@@ -1,13 +1,16 @@
 package com.company.aab.view.user;
 
+import com.company.aab.app.ThemeToggle;
 import com.company.aab.entity.User;
 import com.company.aab.view.main.MainView;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
@@ -25,7 +28,6 @@ import java.util.TimeZone;
 @ViewDescriptor("user-detail-view.xml")
 @EditedEntityContainer("userDc")
 public class UserDetailView extends StandardDetailView<User> {
-
     @ViewComponent
     private TypedTextField<String> usernameField;
     @ViewComponent
@@ -102,6 +104,8 @@ public class UserDetailView extends StandardDetailView<User> {
     protected void onBeforeSave(final BeforeSaveEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
+            if(!Strings.isNullOrEmpty(tenantField.getValue()))
+                getEditedEntity().setUsername(tenantField.getValue()+"|"+usernameField.getValue());
         }
     }
 }

@@ -73,12 +73,14 @@ public class SampleJob3 implements Job {
                                     "left join e.zayavka zayavka " +
                                     "left join e.zayavka.user zayavka_user " +
                                     "where e.date > :start and e.date < :end  " +
+                                    "and e.tenantAttribute = :tenant "+
                                     "order by zayavka_user.username, zayavka.nomer "
                                    )
                     .store("main")
                     .properties("nomer","marka","nomer_zayavki", "firstName","lastName",  "username")
                     .parameter("start", start)
                     .parameter("end", end)
+                    .parameter("tenant", "avtokonnekt")
                     .list();
 
             StringBuilder sb = new StringBuilder();
@@ -96,10 +98,10 @@ public class SampleJob3 implements Job {
             sb.append("%0AМонтажник: ");
             String u = curkvEntity.getValue("firstName")+" "+curkvEntity.getValue("lastName");
             sb.append(u) .append("%0A").append("Отправлено в Бипиум :%0A");
-            sb.append("Номер заявки: ").append(curkvEntity.getValue("nomer_zayavki").toString());
+            sb.append("Номер заявки: ").append((String)curkvEntity.getValue("nomer_zayavki"));
             sb.append("%0A");
-            sb.append(curkvEntity.getValue("marka").toString());
-            sb.append(" ").append(curkvEntity.getValue("nomer").toString()).append("%0A");
+            sb.append((String)(curkvEntity.getValue("marka")));
+            sb.append(" ").append((String)(curkvEntity.getValue("nomer"))).append("%0A");
             do  {
                 boolean isSameUser = StringUtils.equals(curkvEntity.getValue("username"), next.getValue("username"));
                 boolean isSameZayavka = StringUtils.equals(curkvEntity.getValue("nomer_zayavki"), next.getValue("nomer_zayavki"));
@@ -113,14 +115,14 @@ public class SampleJob3 implements Job {
                     sb.append(u) .append("%0A");
                 }
                 if(!isSameZayavka){
-                       sb.append("Номер заявки: ").append(curkvEntity.getValue("nomer_zayavki").toString());
+                       sb.append("Номер заявки: ").append((String)(curkvEntity.getValue("nomer_zayavki")));
                        sb.append("%0A");
                    }
 
 
 
-                sb.append(curkvEntity.getValue("marka").toString());
-                sb.append(" ").append(curkvEntity.getValue("nomer").toString()).append("%0A");
+                sb.append((String)(curkvEntity.getValue("marka")));
+                sb.append(" ").append((String)(curkvEntity.getValue("nomer"))).append("%0A");
                 curkvEntity = next;
                 next = i.next();
                 sum = sum +1;

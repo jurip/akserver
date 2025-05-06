@@ -35,6 +35,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service("flutterService")
 public class FlutterServiceBean {
+
     private static final Logger log = LoggerFactory.getLogger(FlutterServiceBean.class);
     public static final String AVTOKONNEKT = "avtokonnekt";
     public static final String INFOGRAF = "infograf";
@@ -199,6 +200,7 @@ public class FlutterServiceBean {
             avto.setMarka(a.getMarka_avto());
             avto.setNomerAG(a.getNomerAG());
             avto.setTenantAttribute(AVTOKONNEKT);
+            avto.setUsername(zayavka.getUsername());
             saveContext.saving(avto);
         }
         saveContext.saving(r);
@@ -486,13 +488,47 @@ public class FlutterServiceBean {
         }
         return true;
     }
+    //from bipium
+    public boolean updateAvto(Avtomobil avto, boolean status){
+
+        log.info("Avto {} sohraneno w bipiume {}",avto.getId(), status);
+        if(!status)
+            return false;
+        Avtomobil r = dataManager.load(Avtomobil.class).id(avto.getId()).one();
+        r.setStatus("VYPOLNENA");
+        dataManager.save(r);
+        User user = getUser(r.getUsername());
+
+        if(user.getFcmRegistrationToken()!=null){
+
+            FcmSender.sendAvtoUpdateMessageToApp(user.getFcmRegistrationToken(),avto.getId().toString());
+
+        }
+        return true;
+
+    }
+
     //iz mp
-    public boolean saveAvto(Avtomobil avto) {
+    public String resendAvto(String id){
+        Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(UUID.fromString(id)).optional();
+        if(prepareAndSendToBipium(ra.get())){
+
+            ra.get().setStatus(Avtomobil.POSLANA_V_BIPIUM);
+            return "ok";
+        }else{
+            ra.get().setStatus("NE_POSLANA_V_BIPIUM_ERROR");
+            return "no";
+        }
+
+    }
+    //iz mp
+    public String saveAvto(Avtomobil avto) {
         Avtomobil newOrLoaded;
         Optional<Avtomobil> ra = dataManager.load(Avtomobil.class).id(avto.getId()).optional();
 
         if(ra.isEmpty()) {
              newOrLoaded = dataManager.create(Avtomobil.class);
+            newOrLoaded.setId(avto.getId());
             newOrLoaded.setZayavka(avto.getZayavka());
             newOrLoaded.setMarka(avto.getMarka());
             newOrLoaded.setNomer(avto.getNomer());
@@ -507,9 +543,12 @@ public class FlutterServiceBean {
         }else {
             newOrLoaded = ra.get();
         }
+        newOrLoaded.setLat(avto.getLat());
+        newOrLoaded.setLng(avto.getLng());
+        newOrLoaded.setNachaloRabot(avto.getNachaloRabot());
         newOrLoaded.setComment(avto.getComment());
         newOrLoaded.setDate(avto.getDate());
-        newOrLoaded.setStatus("VYPOLNENA");
+        newOrLoaded.setStatus("POLUCHENA_IZ_MP");
         List<AvtoFoto> afs = new ArrayList<AvtoFoto>();
         for (AvtoFoto f : avto.getAvtoFotos()){
             AvtoFoto nf = dataManager.create(AvtoFoto.class);
@@ -526,11 +565,11 @@ public class FlutterServiceBean {
             JsonObject r = sendMessageToBot(afs.get(afs.size() - 1).getFile().toString(), avto.getId().toString());
             if (r != null) {
 
-                if (r.get("Марка") != null && !r.get("Марка").isJsonNull()) {
+                if (r.get("Марка") != null && !r.get("Марка").isJsonNull()&&r.get("Марка").getAsString()!="null") {
 
                     newOrLoaded.setMarka(r.get("Марка").getAsString());
                 }
-                if (r.get("Госномер") != null && !r.get("Госномер").isJsonNull())
+                if (r.get("Госномер") != null && !r.get("Госномер").isJsonNull()&&r.get("Госномер").getAsString()!="null")
                     newOrLoaded.setNomer(r.get("Госномер").getAsString());
             }
         }
@@ -573,6 +612,12 @@ public class FlutterServiceBean {
             AvtoUsluga of = dataManager.create(AvtoUsluga.class);
             of.setAvtomobil(newOrLoaded);
             of.setTitle(u.getTitle());
+            Usluga usl = dataManager.load(Usluga.class)
+                    .query("select u from Usluga u where u.code = :code and u.tenantAttribute = :tenant")
+                    .parameter("code", u.getTitle())
+                    .parameter("tenant",newOrLoaded.getTenantAttribute())
+                    .one();
+            of.setUsluga(usl);
             of.setKolichestvo(u.getKolichestvo());
             of.setSverh(u.getSverh());
             of.setTenantAttribute(avto.getTenantAttribute());
@@ -621,12 +666,12 @@ public class FlutterServiceBean {
         log.info("Mp sohranjaet otchet: {}", newOrLoaded);
 
 
-        if(newOrLoaded.getTenantAttribute().equals(AVTOKONNEKT)||isTestUser( newOrLoaded.getUsername()))
-            return prepareAndSendToBipium(newOrLoaded);
-
-
-
-        return true;
+        if(newOrLoaded.getTenantAttribute().equals(AVTOKONNEKT)||isTestUser( newOrLoaded.getUsername())) {
+            return prepareAndSendToBipium(newOrLoaded)?Avtomobil.POSLANA_V_BIPIUM:"OSHIBKA_OTPRAVKI_V_BIPIUM";
+        }
+        newOrLoaded.setStatus(Avtomobil.VYPOLNENA);
+        dataManager.save(newOrLoaded);
+        return Avtomobil.VYPOLNENA;
 
 
     }
@@ -637,7 +682,10 @@ public class FlutterServiceBean {
 
     private boolean prepareAndSendToBipium( Avtomobil savedWithAllData) {
         Avto av = new Avto();
+        av.setId(savedWithAllData.getId().toString());
         av.setZayavka_id(savedWithAllData.getZayavka().getId().toString());
+        av.setUsername(savedWithAllData.getUsername());
+
         av.setMarka_avto(savedWithAllData.getMarka());
         av.setNomer_avto(savedWithAllData.getNomer());
         av.setNomerAG(savedWithAllData.getNomerAG());
@@ -695,17 +743,16 @@ public class FlutterServiceBean {
         }
         av.setAvtofotos(afo);
 
-
-
-        av.setStatus("VYPOLNENA");
         R re = new R();
         re.setReport(av);
+        savedWithAllData.setStatus("POSYLAEM_V_BIPIUM");
         boolean sent =  sendToBpium( getBipiumPathByUser(savedWithAllData.getUsername()) +"/api/webrequest/mobilapp?async=true", re);
         if(!sent){
-            savedWithAllData.setStatus("NOVAYA");
-            dataManager.save(savedWithAllData);
+            savedWithAllData.setStatus("NE_POSLALI_V_BIPIUM");
+
             log.info("Ne otpravil v bipium: {}", savedWithAllData);
         }
+        dataManager.save(savedWithAllData);
         return sent;
     }
 
@@ -1005,6 +1052,7 @@ class Avto{
     static Avto fromAvtomobil(Avtomobil a){
         Avto r  = new Avto();
         r.setId(a.getId().toString());
+        r.setUsername(a.getUsername());
         r.setComment(a.getComment());
         r.setNomerAG(a.getNomerAG());
         r.setMarka_avto(a.getMarka());
@@ -1038,6 +1086,15 @@ class Avto{
     private String status;
     private String lat;
     private String lng;
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public Date getNachaloRabot() {
         return nachaloRabot;
